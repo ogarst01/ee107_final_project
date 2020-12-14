@@ -8,11 +8,17 @@ fs = 32;
 %signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 1 0 0 0 0 0 0 0];
 
+% to display functions
+displayModulate = false;
+displayChannel = false;
+displayMatched = false;
+
+
 %% Modulate signal:
 % make the transmitted signal, thru channel + add noise: 
 [srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
 
-if (1)
+if (displayModulate)
     figure(1);
     clf;
     subplot(2, 1, 1);
@@ -60,7 +66,7 @@ end
 
 [channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated);
 
-if(1)
+if(displayChannel)
     % SRRC time-domain signal post-distortion
     figure(10);
     plot(post_channel_srrc);
@@ -109,7 +115,7 @@ half_sine_filtered_noisy = post_channel_hs;
 %% Matched Filter
 [srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(srrc_modulated, hs_modulated);
 
-if (0)
+if (displayMatched)
     figure(40);
     plot_end = (length(hs_convolved)-1)/fs;
     plot(0:1/fs:(length(hs_convolved)-1)/fs, hs_convolved);
@@ -139,17 +145,17 @@ end
 %% Equalizers
 
 % feed the transmitted signals into the receiver:
-SRRC_equalized = zeroFilterEqualizer(channel_impulse_response, srrc_convolved);
-HS_equalized   = zeroFilterEqualizer(channel_impulse_response, hs_convolved);
+SRRC_equalized = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs);
+HS_equalized   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs);
 
 %%
 
 figure, 
-plot(real(SRRC_equalized))
+plot(SRRC_equalized)
 title('SRRC')
 
 figure, 
-plot(real(HS_equalized))
+plot(HS_equalized)
 title('HS')
 
 figure, 

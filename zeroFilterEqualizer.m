@@ -1,4 +1,4 @@
-function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal)
+function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal, fs)
 
 % do not put 0's at the last bit (don't pad)
 
