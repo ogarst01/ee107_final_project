@@ -3,14 +3,14 @@
 channelResponse = channel_impulse_response;
 signal = srrc_convolved;
 
-H = fftshift(fft(channelResponse,1024));
+H = (fft(channelResponse));
 
 % TODO - figure out how to truncate? 
 
 % invert to make the Zero forcing response:
 HZF = 1./H;
 
-hzt = ifft(HZF);
+hzt = (ifft(HZF));
 
 figure, 
 hold on
@@ -27,19 +27,27 @@ title('plot to check the H * HZF = 1')
 
 %% Plot in time the impulse response of the equalizer:
 figure, 
-plot(hzt)
+plot(real(hzt))
 title('equalizer impulse response in time')
 
 %%
-HZF = fftshift(fft(1./H));
+HZF = fft(1./H);
 
 % make the signal output: 
-forcedZeroSign = fftshift(ifft(HZF.*fft(signal,1024)));
+
+hzt = real(hzt);
+forcedZeroSign = conv(hzt, signal);
+
+figure,
+plot(conv(hzt,channel_impulse_response))
 
 figure, 
-plot(forcedZeroSign)
+subplot(2,1,1)
+plot(real(forcedZeroSign))
 title('output signal after convolution in time')
-
+subplot(2,1,2)
+plot(signal)
+title('original signal')
 %end
 % 
 % % Olive Garst
