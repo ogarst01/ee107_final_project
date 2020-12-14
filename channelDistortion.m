@@ -16,12 +16,4 @@ h = [zeroPad, h(1), zeroPad, h(2), zeroPad, h(3), zeroPad, h(4), zeroPad];
 % now send the modulated bit stream through the filter:
 half_sine_filtered = conv(half_sine_modulated,h);
 srrc_filtered = conv(srrc_modulated,h);
-
-figure,
-freqz(half_sine_filtered);
-title('frequency response of filtered half sine')
-
-figure,
-freqz(srrc_filtered);
-title('frequency response of filtered SRRC')
 end

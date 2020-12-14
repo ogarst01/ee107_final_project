@@ -23,10 +23,6 @@ pulse(last_pole_idx) = special_value;
 
 pulse = pulse/norm(pulse);
 
-figure,
-freqz(pulse);
-title('frequency response of unfiltered SRRC')
-
 t = 0:Ts:T_bit*length(signal);
 srrc_modulated = zeros(size(t));
 for idx = 1:length(signal)
