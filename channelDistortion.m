@@ -11,7 +11,7 @@ h(4) = -2/7;
 % TODO - try upsample command later
 zeroPad = zeros(1,31);
 
-h = [zeroPad, h(1), zeroPad, h(2), zeroPad, h(3), zeroPad, h(4), zeroPad];
+h = [h(1), zeroPad, h(2), zeroPad, h(3), zeroPad, h(4)];
 
 % now send the modulated bit stream through the filter:
 half_sine_filtered = conv(half_sine_modulated,h);

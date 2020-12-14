@@ -4,15 +4,15 @@ close all
 % define some constants:
 T_bit = 1;
 fs = 32;
-signal = randi([0 1], 1, 100);
-% signal = [0 0 1 1 1 0 1 1 0 1];
+ signal = randi([0 1], 1, 100);
+%signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 1 0 0 0 0 0 0 0];
 
 %% Modulate signal:
 % make the transmitted signal, thru channel + add noise: 
 [srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
 
-if (0)
+if (1)
     figure(1);
     clf;
     subplot(2, 1, 1);
@@ -60,7 +60,7 @@ end
 
 [channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated);
 
-if(0)
+if(1)
     % SRRC time-domain signal post-distortion
     figure(10);
     plot(post_channel_srrc);
@@ -99,8 +99,12 @@ end
 % whether or not to display images of different noise powers: 
 testing = false;
 % sqrt of noise power: 
-sqrtNsPowr2 = 0.0001;
-[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
+%sqrtNsPowr2 = 0;
+%[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
+
+
+srrc_filtered_noisy = post_channel_srrc;
+half_sine_filtered_noisy = post_channel_hs;
 
 %% Matched Filter
 [srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(srrc_modulated, hs_modulated);
@@ -129,7 +133,6 @@ if (0)
     
     eyediagram(srrc_convolved, 2*fs, 2);
     title("Eye Diagram: SRRC Matched Filter Output, 2 periods");
-    
     
 end
 
