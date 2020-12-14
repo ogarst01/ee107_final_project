@@ -12,18 +12,18 @@ H = fft(channelResponse2);
 HZF = 1./H;
 
 hzt = (ifft(HZF));
-
-figure, 
-hold on
-plot(abs(HZF), 'g')
-plot(abs(H), 'r')
-legend('ZF', 'channel')
-hold off
-title('zero forcing freq response vs. channel freq response')
-
-%%
-figure, plot(abs(H.*HZF))
-title('plot to check the H * HZF = 1')
+% 
+% figure, 
+% hold on
+% plot(abs(HZF), 'g')
+% plot(abs(H), 'r')
+% legend('ZF', 'channel')
+% hold off
+% title('zero forcing freq response vs. channel freq response')
+% 
+% %%
+% figure, plot(abs(H.*HZF))
+% title('plot to check the H * HZF = 1')
 
 
 %% Plot in time the impulse response of the equalizer:
@@ -35,23 +35,23 @@ title('equalizer impulse response in time')
 % make the signal output: 
 
 forcedZeroSign = conv(hzt,signal2);
-
-figure,
-plot(conv(hzt,channelResponse))
-title('conv in time should yeild a impulse ')
-
-figure, 
-subplot(2,1,1)
-plot(forcedZeroSign)
-title('output signal after convolution in time')
-subplot(2,1,2)
-plot(signal2)
-title('original signal')
-
-% make the eye diagrams:
-eyediagram(forcedZeroSign, 2*fs, 2);
-title("Eye Diagram: SRRC Matched Filter Output, 2 periods");
-    
+% 
+% figure,
+% plot(conv(hzt,channelResponse))
+% title('conv in time should yeild a impulse ')
+% 
+% figure, 
+% subplot(2,1,1)
+% plot(forcedZeroSign)
+% title('output signal after convolution in time')
+% subplot(2,1,2)
+% plot(signal2)
+% title('original signal')
+% 
+% % make the eye diagrams:
+% eyediagram(forcedZeroSign, 2*fs, 2);
+% title("Eye Diagram: SRRC Matched Filter Output, 2 periods");
+%     
 end
 % 
 % % Olive Garst

@@ -12,8 +12,8 @@ fs = 32;
 displayModulate = false;
 displayChannel = false;
 displayMatched = false;
-
-
+plotZFEqualizer = false;
+plotMMSEqualizer = true; 
 %% Modulate signal:
 % make the transmitted signal, thru channel + add noise: 
 [srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
@@ -105,12 +105,12 @@ end
 % whether or not to display images of different noise powers: 
 testing = false;
 % sqrt of noise power: 
-%sqrtNsPowr2 = 0;
-%[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
+sqrtNsPowr2 = 0;
+[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
 
 
-srrc_filtered_noisy = post_channel_srrc;
-half_sine_filtered_noisy = post_channel_hs;
+%srrc_filtered_noisy = post_channel_srrc;
+%half_sine_filtered_noisy = post_channel_hs;
 
 %% Matched Filter
 [srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(srrc_modulated, hs_modulated);
@@ -148,16 +148,35 @@ end
 SRRC_equalized = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs);
 HS_equalized   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs);
 
-%%
+signalRecovered = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
+signalRecovered = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
-figure, 
-plot(SRRC_equalized)
-title('SRRC')
+if(plotZFEqualizer)
+    
+    figure, 
+    subplot(2,1,1)
+    plot(SRRC_equalized)
+    title('recovered signal using SRRC Zero forcing equalized')
+    subplot(2,1,2)
+    plot(srrc_convolved)
+    title('original SRRC modulated signal')
+    
+    figure, 
+    subplot(2,1,1)
+    plot(HS_equalized)
+    title('recovered signal using Half Sine Zero forcing equalized')
+    subplot(2,1,2)
+    plot(hs_convolved)
+    title('original half sine modulated signal')
+    
+    % plot eye diagrams: 
+    eyediagram(SRRC_equalized, 2*fs, 2);
+    title("Eye Diagram: SRRC Zero Forcing Equalizer Output, 2 periods");
+     
+    eyediagram(HS_equalized, 2*fs, 2);
+    title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
 
-figure, 
-plot(HS_equalized)
-title('HS')
+end
 
-figure, 
-plot(real(channel_impulse_response))
-title('SRRC')
+if(plotMMSEqualizer)
+end
