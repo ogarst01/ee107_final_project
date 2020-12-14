@@ -1,5 +1,7 @@
 %function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal)
 
+channelResponse = channel_impulse_response;
+signal = srrc_convolved;
 
 H = fftshift(fft(channelResponse,1024));
 
