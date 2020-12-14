@@ -47,7 +47,7 @@ eyediagram(srrc_modulated, T_bit*fs, 1, 16);
 title("Eye Diagram: SRRC-PCM");
 
 %% Run through channel:
-[srrc_filtered,half_sine_filtered, h]  = channelNoise(half_sine_modulated, srrc_modulated);
+[srrc_filtered,half_sine_filtered, h]  = channelDistortion(half_sine_modulated, srrc_modulated);
 
 %% Q6:
 figure,
@@ -85,7 +85,4 @@ transmittedSRRC = srrc_filtered_noisy;
 transmittedHS = half_sine_filtered_noisy;
 
 channel = h;
-%% Q9 
-
-%% Q10
 end

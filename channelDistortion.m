@@ -1,4 +1,4 @@
-function [srrc_filtered,half_sine_filtered, h] = channelNoise(half_sine_modulated, srrc_modulated)
+function [srrc_filtered,half_sine_filtered, h] = channelDistortion(half_sine_modulated, srrc_modulated)
 %% channel: 
 lenChannel = 4;
 N = 32;
