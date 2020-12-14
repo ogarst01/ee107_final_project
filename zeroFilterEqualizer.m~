@@ -19,9 +19,7 @@ signal = rxSRRC;
 channelResponse = channel;
 
 %function response = zeroFilterEqualizer(channelResponse, signal)
-H = fftshift(fft(channelResponse,1024));
-
-% TODO - figure out how to truncate? 
+H = fft(channelResponse,1024);
 
 % invert to make the Zero forcing response:
 HZF = 1./H;
@@ -43,13 +41,23 @@ legend('ZF', 'channel')
 hold off
 title('zero forcing freq response vs. channel freq response')
 
-%%
+
+
 figure, plot(abs(H.*HZF))
 title('plot to check the H * HZF = 1')
 
-%%
-HZF = fftshift(fft(1./H));
-freqz(HZF)
 
-freqz()
+%%
+
+figure,
+hold on
+plot(responseUp'*hUp)
+plot(responseUp, 'r')
+legend('responseUp'*hUp','responseUp')
+hold off
+title('ZF * channel impulse responses')
+
+% TODO: 
+% check why F(f)xC(f) = 1
+
 % end
