@@ -1,17 +1,29 @@
-function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal, fs)
+% Olive Garst
+% Dec. 2020
+%function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal)
+
+channelResponse = channel_impulse_response;
+signal = hs_convolved;
+
+% Inputs:   channel impulse response
+%           signal to be equalize
+%           
+% Outputs: equalized signal
 
 % do not put 0's at the last bit (don't pad)
 
 signal2 = signal;%srrc_convolved;
 
-channelResponse2 = downsample(channelResponse, 31);
+channelResponse2 = channelResponse;
 
-H = fft(channelResponse2);
+NFFT = 10*length(signal);
+
+H = fft(channelResponse2, NFFT);
 
 % invert to make the Zero forcing response:
 HZF = 1./H;
 
-hzt = (ifft(HZF));
+hzt = (ifft(HZF, NFFT));
 % 
 % figure, 
 % hold on
@@ -27,32 +39,30 @@ hzt = (ifft(HZF));
 
 
 %% Plot in time the impulse response of the equalizer:
-figure, 
-plot(hzt)
-title('equalizer impulse response in time')
+% figure, 
+% plot(hzt)
+% title('equalizer impulse response in time')
 
 %%
 % make the signal output: 
 
 forcedZeroSign = conv(hzt,signal2);
-% 
-% figure,
-% plot(conv(hzt,channelResponse))
-% title('conv in time should yeild a impulse ')
-% 
-% figure, 
-% subplot(2,1,1)
-% plot(forcedZeroSign)
-% title('output signal after convolution in time')
-% subplot(2,1,2)
-% plot(signal2)
-% title('original signal')
-% 
-% % make the eye diagrams:
-% eyediagram(forcedZeroSign, 2*fs, 2);
-% title("Eye Diagram: SRRC Matched Filter Output, 2 periods");
-%     
-end
+
+sprintf('length channel = %g',length(channelResponse2))
+sprintf('length H = %g',length(H))
+sprintf('length hzt = %g',length(hzt))
+sprintf('length received signal = %g',length(forcedZeroSign))
+sprintf('length signal = %g',length(signal2))
+
+figure,
+subplot(3,1,1)
+plot(forcedZeroSign)
+subplot(3,1,2)
+plot(hs_modulated)
+subplot(3,1,3)
+plot(post_channel_hs)
+
+%end
 % 
 % % Olive Garst
 % % Dec. 2020

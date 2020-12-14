@@ -1,4 +1,4 @@
-% function signalRecovered = MMSEEqualizer(signal, sigma2, channel_impulse_resp)
+function signalRecovered = MMSEEqualizer(signal, sigma2, channel_impulse_resp)
 
 % for debugging:
 sigma2 = sqrtNsPowr2;
@@ -26,6 +26,7 @@ Hconj = conj(H);
 
 % calculate the frequency response of the MMSE Equalizer:
 HMMSE = Hconj./((abs(H)).^2 + (SNR));
+
 NFFT = length(HMMSE);
 
 % find signal in freq domain:
@@ -35,7 +36,7 @@ Xf = fft(signal, NFFT);
 % Xf = 1x3233
 % HMMSE = 
 signalRecovered = ifft(Xf.*HMMSE, NFFT);
-
+signalRecovered = conv(signal, ifft(HMMSE))
 figure, 
 subplot(2,1,1)
 plot(signalRecovered)
@@ -44,4 +45,4 @@ subplot(2,1,2)
 plot(hs_convolved)
 title('original half sine modulated signal')
     
-% end
+end
