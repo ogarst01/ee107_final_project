@@ -105,7 +105,7 @@ sqrtNsPowr2 = 0.0001;
 %% Matched Filter
 [srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(srrc_modulated, hs_modulated);
 
-if (1)
+if (0)
     figure(40);
     plot_end = (length(hs_convolved)-1)/fs;
     plot(0:1/fs:(length(hs_convolved)-1)/fs, hs_convolved);
@@ -133,9 +133,22 @@ if (1)
     
 end
 
-return
 %% Equalizers
 
 % feed the transmitted signals into the receiver:
-SRRC_equalized = zeroFilterEqualizer(channel_impulse_response, rxSRRC);
-HS_equalized   = zeroFilterEqualizer(channel_impulse_response, rxHS);
+SRRC_equalized = zeroFilterEqualizer(channel_impulse_response, srrc_convolved);
+HS_equalized   = zeroFilterEqualizer(channel_impulse_response, hs_convolved);
+
+%%
+
+figure, 
+plot(real(SRRC_equalized))
+title('SRRC')
+
+figure, 
+plot(real(HS_equalized))
+title('HS')
+
+figure, 
+plot(real(channel_impulse_response))
+title('SRRC')
