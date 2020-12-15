@@ -151,34 +151,37 @@ end
 [SRRC_equalized, hzt, ht, t, HZF, H, f] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs);
 [HS_equalized, ~, ~, ~, ~, ~]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs);
 
-% SRRC_MSSE = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
-% HS_MSSE   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
-
-if(0)
+if(1)
     
     figure, 
-    subplot(3,1,1)
+    subplot(4,1,1)
     plot(SRRC_equalized)
     title('recovered signal using SRRC Zero forcing equalized')
-    subplot(3,1,2)
+    subplot(4,1,2)
     plot(srrc_convolved)
     title('SRRC channel-distorted signal')
-    subplot(3, 1, 3);
+    subplot(4, 1, 3);
     [undistorted_srrc_matched_filter_output, ~, ~, ~] = matchedFilter(srrc_modulated, hs_modulated);
     plot(undistorted_srrc_matched_filter_output);
     title("Undistorted SRRC Matched Fitler Output");
+    subplot(4,1,4);
+    plot(hs_modulated);
+    title("Original Modulated Signal");
     
     figure, 
-    subplot(3,1,1)
+    subplot(4,1,1)
     plot(HS_equalized)
     title('recovered signal using Half Sine Zero forcing equalized')
-    subplot(3,1,2)
+    subplot(4,1,2)
     plot(hs_convolved)
     title('Half-Sine channel-distorted Signal')
-    subplot(3, 1, 3);
+    subplot(4, 1, 3);
     [~, ~, undistorted_hs_matched_filter_output, ~] = matchedFilter(srrc_modulated, hs_modulated);
     plot(undistorted_hs_matched_filter_output);
     title("Undistorted Half-Sine Matched Filter Output");
+    subplot(4,1,4);
+    plot(hs_modulated);
+    title("Original Modulated Signal");
     
     figure,
     plot(f, abs(H));
@@ -207,6 +210,10 @@ if(0)
     title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
 end
 
+%% MMSE Equalizer code: 
+
+[SRRC_MSSE, HMMSE1] = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
+[HS_MSSE, HMMSE2]   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
 if(0)
     figure, 
@@ -232,18 +239,52 @@ if(0)
     eyediagram(HS_MSSE, 2*fs, 2);
     title("Eye Diagram: HS MSSE, 2 periods");
     
-end
+    figure,
+    subplot(5,1,1)
+    plot(hs_modulated)
+    title('output of modulated signal - HS')
+    subplot(5,1,2)
+    plot(post_channel_hs)
+    title('output of channel -HS')
+    subplot(5,1,3)
+    plot(half_sine_filtered_noisy)
+    title('noisy signal through channel - HS')
+    subplot(5,1,4)
+    plot(hs_convolved)
+    title('after matched filter - HS')
+    subplot(5,1,5)
+    plot(HS_MSSE)
+    title('output of MMSE equalizer - HS')
+    
+    figure,
+    subplot(5,1,1)
+    plot(srrc_modulated)
+    title('output of modulated signal - SSRC')
+    subplot(5,1,2)
+    plot(post_channel_srrc)
+    title('output of channel - SSRC')
+    subplot(5,1,3)
+    plot(srrc_filtered_noisy)
+    title('noisy signal through channel - SSRC')
+    subplot(5,1,4)
+    plot(srrc_convolved)
+    title('after matched filter - SSRC')
+    subplot(5,1,5)
+    plot(SRRC_MSSE)
+    title('output of equalizer (recovered signal) - SSRC')
+  
+    % plot the convolution of the impulse response of the equalizer and the
+    % channel:
+    % ideally these should come out to be dirac deltas: 
+    figure, 
+    plot(conv(channel_impulse_response, ifft(HMMSE1)))
+    title('Dirac Delta check for the SRRC pulse')
 
-% figure,
-% subplot(3,1,1)
-% plot(HS_MSSE)
-% title('output of equalizer')
-% subplot(3,1,2)
-% plot(hs_modulated)
-% title('output of modulated signal')
-% subplot(3,1,3)
-% plot(post_channel_hs)
-% title('output of channel')
+    figure, 
+    plot(conv(channel_impulse_response, ifft(HMMSE2)))
+    title('Dirac Delta check for the HS pulse')
+
+end
 
 %% Sampling
 
