@@ -4,7 +4,7 @@ close all
 % define some constants:
 T_bit = 1;
 fs = 32;
-signal = randi([0 1], 1, 100);
+signal = randi([0 1], 1, 104);
 % %signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
@@ -291,6 +291,7 @@ end
 [hs_symbols] = sample_hs(HS_equalized);
 hs_bits = (hs_symbols + 1) / 2;
 
+
 [srrc_symbols] = sample_srrc(SRRC_equalized);
 srrc_bits = srrc_symbols;
 
@@ -305,3 +306,11 @@ if(1)
     xlabel("Bit Index");
     ylabel("Bit");
 end
+
+%% Rearrange Data
+
+num_pixels = ceil(length(hs_bits) / 8);
+hs_pixels = reshape(hs_bits, [8, num_pixels])';
+
+num_pixels = ceil(length(srrc_bits) / 8);
+srrc_pixels = reshape(srrc_bits, [8, num_pixels])';
