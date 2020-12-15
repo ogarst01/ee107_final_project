@@ -145,29 +145,56 @@ end
 %% Equalizers
 
 % feed the transmitted signals into the receiver:
-SRRC_equalized = zeroFilterEqualizer(channel_impulse_response, srrc_convolved);
-HS_equalized   = zeroFilterEqualizer(channel_impulse_response, hs_convolved);
+[SRRC_equalized, hzt, ht, t, HZF, H, f] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs);
+[HS_equalized, ~, ~, ~, ~, ~]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs);
 
-SRRC_MSSE = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
-HS_MSSE   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
+% SRRC_MSSE = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
+% HS_MSSE   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
-if(0)
+if(1)
     
     figure, 
-    subplot(2,1,1)
+    subplot(3,1,1)
     plot(SRRC_equalized)
     title('recovered signal using SRRC Zero forcing equalized')
-    subplot(2,1,2)
+    subplot(3,1,2)
     plot(srrc_convolved)
-    title('original SRRC modulated signal')
+    title('SRRC channel-distorted signal')
+    subplot(3, 1, 3);
+    [undistorted_srrc_matched_filter_output, ~, ~, ~] = matchedFilter(srrc_modulated, hs_modulated);
+    plot(undistorted_srrc_matched_filter_output);
+    title("Undistorted SRRC Matched Fitler Output");
     
     figure, 
-    subplot(2,1,1)
+    subplot(3,1,1)
     plot(HS_equalized)
     title('recovered signal using Half Sine Zero forcing equalized')
-    subplot(2,1,2)
+    subplot(3,1,2)
     plot(hs_convolved)
-    title('original half sine modulated signal')
+    title('Half-Sine channel-distorted Signal')
+    subplot(3, 1, 3);
+    [~, ~, undistorted_hs_matched_filter_output, ~] = matchedFilter(srrc_modulated, hs_modulated);
+    plot(undistorted_hs_matched_filter_output);
+    title("Undistorted Half-Sine Matched Filter Output");
+    
+    figure,
+    plot(f, abs(H));
+    hold on
+    plot(f, abs(HZF));
+    legend("Channel Frequency Response", "Equalizer Frequency Response");
+    title("Frequency Responses (Magnitude)");
+    xlabel("Frequency (Hz)");
+    ylabel("Magnitude");
+    
+    figure,
+    plot(0:1/fs:(length(ht)-1)/fs, ht);
+    title("Channel Impulse Response");
+    xlabel("Time (sec)");
+    
+    figure,
+    plot(0:1/fs:(length(hzt)-1)/fs, hzt);
+    title("Equalizer Impulse Response");
+    xlabel("Time (sec)");
     
     % plot eye diagrams: 
     eyediagram(SRRC_equalized, 2*fs, 2);
@@ -175,17 +202,6 @@ if(0)
      
     eyediagram(HS_equalized, 2*fs, 2);
     title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
-
-    figure,
-    subplot(3,1,1)
-    plot(HS_equalized)
-    title('output of equalizer')
-    subplot(3,1,2)
-    plot(hs_modulated)
-    title('output of modulated signal')
-    subplot(3,1,3)
-    plot(post_channel_hs)
-    title('output of channel')
 end
 
 
@@ -193,7 +209,7 @@ if(0)
     figure, 
     subplot(2,1,1)
     plot(SRRC_MSSE)
-    title('recovered signal using SRRC Zero forcing equalized')
+    title('recovered signal using SRRC MSSE')
     subplot(2,1,2)
     plot(srrc_convolved)
     title('original SRRC modulated signal')
@@ -201,27 +217,27 @@ if(0)
     figure, 
     subplot(2,1,1)
     plot(HS_MSSE)
-    title('recovered signal using Half Sine Zero forcing equalized')
+    title('recovered signal using Half Sine MSSE')
     subplot(2,1,2)
     plot(hs_convolved)
     title('original half sine modulated signal')
     
     % plot eye diagrams: 
     eyediagram(SRRC_MSSE, 2*fs, 2);
-    title("Eye Diagram: SRRC Zero Forcing Equalizer Output, 2 periods");
+    title("Eye Diagram: SRRC MSSE, 2 periods");
      
     eyediagram(HS_MSSE, 2*fs, 2);
-    title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
+    title("Eye Diagram: HS MSSE, 2 periods");
     
 end
 
-figure,
-subplot(3,1,1)
-plot(HS_MSSE)
-title('output of equalizer')
-subplot(3,1,2)
-plot(hs_modulated)
-title('output of modulated signal')
-subplot(3,1,3)
-plot(post_channel_hs)
-title('output of channel')
+% figure,
+% subplot(3,1,1)
+% plot(HS_MSSE)
+% title('output of equalizer')
+% subplot(3,1,2)
+% plot(hs_modulated)
+% title('output of modulated signal')
+% subplot(3,1,3)
+% plot(post_channel_hs)
+% title('output of channel')
