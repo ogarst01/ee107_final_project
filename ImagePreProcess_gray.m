@@ -2,8 +2,8 @@ function [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_gray(qbits)
 
 % read the image
 X = imread('image.jpg');
-% HARDCODED since we have a 3 channel "color image"
 X = X(:,:,1);
+% HARDCODED since we have a 3 channel "color image"
 % crop the image to a size divisible by 8
 [m, n] = size(X);
 m = m - mod(m,8);

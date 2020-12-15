@@ -1,19 +1,14 @@
-function decStream = bitStreamToChunk(bitStream, bitsPerRow, m, n, numLayers)
+function decStream = bitStreamToChunk(bitStream, bitsPerRow, L,W,N)
 bitStream = uint8(bitStream);
 
-bitsPerRow = 8;
-sizeDec = m*n*numLayers; 
-
-[x, sizeDec] = size(bitStream);
+sizeDec = L*W*N; 
 
 % grab and make into an 8x length matrix (opposite of before)
-bitStreamMat = reshape(bitStream, bitsPerRow, sizeDec/bitsPerRow);
+bitStreamMat = reshape(bitStream, bitsPerRow, sizeDec);
 
 % Then, take from binary back to decimal:
 decStreamVec = bi2de(bitStreamMat');
 
-decStreamVec = decStreamVec(1:64);
-
 % Lastly, throw back into the original image shape:
-decStream = reshape(decStreamVec, 8, 8,1);
+decStream = reshape(decStreamVec, 8, 8, N);
 end

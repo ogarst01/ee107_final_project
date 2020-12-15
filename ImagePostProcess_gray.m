@@ -1,7 +1,7 @@
-function [newZ]=ImagePostProcess_gray(Ztres,r,c,m,n,minval,maxval)
-vec = reshape(Ztres,m,n,r*c);
+function []=ImagePostProcess_gray(Ztres,r,c,m,n,minval,maxval)
+
 %% invert the reshaping operation
-newZt = reshape(permute(vec, [1 3 2 4]), m,n);
+newZt = reshape(permute(reshape(Ztres,8,8,r,c), [1 3 2 4]), m,n);
 
 %%%%%%%%%%%%%% IMAGE POST-PROCESSING %%%%%%%%%%%%%%%%
 temp=im2double(newZt)*(maxval-minval)+minval;
@@ -10,4 +10,3 @@ newZ=blkproc(temp,[8 8],fun);
 
 figure;
 imshow(newZ);
-end

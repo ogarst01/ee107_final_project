@@ -5,23 +5,19 @@ qbits = 8;
 filename = 'image.jpg';
 [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_gray(qbits);
 
-% only grab first slice: 
-DCT_chunk = Ztres;
+% define some dimensions for the system:
+[L,W,H] = size(Ztres);
+
 N = 64;
-[bitStream] = convertToBitStream(DCT_chunk,N);
+% only grab first slice: 
+DCT_chunk = Ztres(:,:,(1:N));
+
+[bitStream] = convertToBitStream(DCT_chunk,L,W,N);
 %%
-bitsPerRow = 8;
-numLayers = 1;
-m = 8; n = 8;
-decStream = bitStreamToChunk(bitStream, qbits, m, n, numLayers);
+decStream = bitStreamToChunk(bitStream, qbits,L,W, N);
 %%TODO: test whether can retreive the data too...
 
 %% Next - feed this through the second part of the image processing
 % pipeline: 
 
-
-newZ = ImagePostProcess_gray(Ztres,r,c,m,n,minval,maxval)
-% snr(newZ,X)
-%%
-max(max(abs(rescale(double(X)) - rescale(double(newZ)))))
-min(min((rescale(double(X)) - rescale(double(newZ)))))
+ImagePostProcess_gray(decStream,r,c,L,W,minval,maxval)
