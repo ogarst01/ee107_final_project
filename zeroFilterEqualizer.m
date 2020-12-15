@@ -23,7 +23,7 @@ forcedZeroSign = conv(hzt,signal);
 % The result of the above convolution produces a signal that is WAY too
 % long.  Trim down to length:
 total_convolution_length = length(conv(hzt, channelResponse2)) + 1;
-desired_length = length(forcedZeroSign) - total_convolution_length + 1;
+desired_length = length(forcedZeroSign) - total_convolution_length + 1 - 1;
 trimmed = forcedZeroSign(1:desired_length+1);
 
 H = fftshift(H);

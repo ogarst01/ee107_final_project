@@ -4,9 +4,12 @@ close all
 % define some constants:
 T_bit = 1;
 fs = 32;
- signal = randi([0 1], 1, 100);
-%signal = [0 0 1 1 1 0 1 1 0 1];
-% signal= [0 1 0 0 0 0 0 0 0];
+signal = randi([0 1], 1, 100);
+% %signal = [0 0 1 1 1 0 1 1 0 1];
+% signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
+% signal = zeros(1, 100);
+% signal(50) = 1;
+
 
 % to display functions
 displayModulate = false;
@@ -151,7 +154,7 @@ end
 % SRRC_MSSE = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
 % HS_MSSE   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
-if(1)
+if(0)
     
     figure, 
     subplot(3,1,1)
@@ -241,3 +244,23 @@ end
 % subplot(3,1,3)
 % plot(post_channel_hs)
 % title('output of channel')
+
+%% Sampling
+
+[hs_symbols] = sample_hs(HS_equalized);
+hs_bits = (hs_symbols + 1) / 2;
+
+[srrc_symbols] = sample_srrc(SRRC_equalized);
+srrc_bits = srrc_symbols;
+
+if(1)
+    figure,
+    plot(0:length(signal)-1, signal);
+    hold on
+    plot(0:length(hs_bits)-1, hs_bits);
+    plot(0:length(srrc_bits)-1, srrc_bits);
+    legend("Original Signal", "Half-Sine Recovered", "SRRC-recovered");
+    title("Recieved vs Transmitted Bits");
+    xlabel("Bit Index");
+    ylabel("Bit");
+end
