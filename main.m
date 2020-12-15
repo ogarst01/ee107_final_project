@@ -1,5 +1,16 @@
-clear;
-close all
+% converts into 8x8 DCT chunks:
+qbits = 8;
+
+[Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_color(qbits);
+
+dimZtres = size(Ztres)
+
+lengthSigVec = dimZtres(1)*dimZtres(2)
+firstSlice = Ztres(:,:,1)
+% reshape into a row of points:
+signalVec = reshape(firstSlice, [1, lengthSigVec]);
+
+%%
 
 % define some constants:
 T_bit = 1;
@@ -10,6 +21,7 @@ signal = randi([0 1], 1, 104);
 % signal = zeros(1, 100);
 % signal(50) = 1;
 
+signal = signalVec;
 
 % to display functions
 displayModulate = false;

@@ -38,6 +38,7 @@ end
 [m, n] = size(Zt);
 % new dimensions of the image after making into inerval of 8:
 r=floor(m/8); c=floor(n/8);
-% reshapes into a 8x8x64 image:
+% 
 Ztres = reshape(permute(reshape(Zt,8,r,8,c), [1 3 2 4]), 8,8,r*c);
+Ztres  = Zt;
 end

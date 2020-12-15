@@ -3,22 +3,16 @@ qbits = 8;
 filename = 'image.jpg';
 [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_gray(qbits);
 
-% make into an array of binary:
-bitsZ = de2bi(Ztres);
-dimZ = size(bitsZ)
+figure,
+imshow(de2biIO)
+
+dimZtres = size(Ztres)
+
 % grab only the first array of values in the first slice of data: 
-lengthSigVec = dimZ(1)*dimZ(2);
+lengthSigVec = dimZtres(1)*dimZtres(2);
 % reshape into a row of points:
-
-%%TODO: test whether can retreive the data too...
-
 %%
-% grab N chunks at a time:
-N = 64;
-
-currSlice = dimZ(:,1:N);
-
-signalVec = rescale(reshape(currSlice, [1, N*dimZ(2)]));
+signalVec = rescale(reshape(Ztres(:,:,1), [1, lengthSigVec]));
 signalVec2 = de2bi(rescale(signalVec));
 %%
 [m, n] = size(double(signalVec))

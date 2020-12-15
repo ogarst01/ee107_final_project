@@ -1,4 +1,4 @@
-function [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_color(qbits)%filename,qbits)
+function [Ztres,r,c,m,n,minval,maxval, X]=ImagePreProcess_color(qbits)%filename,qbits)
 
 
 % read the image
