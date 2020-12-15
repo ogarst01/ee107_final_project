@@ -105,12 +105,12 @@ end
 % whether or not to display images of different noise powers: 
 testing = false;
 % sqrt of noise power: 
-sqrtNsPowr2 = 0.1;
+sqrtNsPowr2 = 0;
 [srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
 
 
-srrc_filtered_noisy = post_channel_srrc;
-half_sine_filtered_noisy = post_channel_hs;
+%srrc_filtered_noisy = post_channel_srrc;
+%half_sine_filtered_noisy = post_channel_hs;
 
 %% Matched Filter
 [srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(post_channel_srrc, post_channel_hs);
@@ -151,7 +151,7 @@ HS_equalized   = zeroFilterEqualizer(channel_impulse_response, hs_convolved);
 SRRC_MSSE = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
 HS_MSSE   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
-if(plotZFEqualizer)
+if(0)
     
     figure, 
     subplot(2,1,1)
@@ -176,22 +176,20 @@ if(plotZFEqualizer)
     eyediagram(HS_equalized, 2*fs, 2);
     title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
 
+    figure,
+    subplot(3,1,1)
+    plot(HS_equalized)
+    title('output of equalizer')
+    subplot(3,1,2)
+    plot(hs_modulated)
+    title('output of modulated signal')
+    subplot(3,1,3)
+    plot(post_channel_hs)
+    title('output of channel')
 end
 
-figure,
-subplot(3,1,1)
-plot(HS_equalized)
-title('output of equalizer')
-subplot(3,1,2)
-plot(hs_modulated)
-title('output of modulated signal')
-subplot(3,1,3)
-plot(post_channel_hs)
-title('output of channel')
 
-
-if(1)
-        
+if(0)
     figure, 
     subplot(2,1,1)
     plot(SRRC_MSSE)
@@ -214,5 +212,16 @@ if(1)
      
     eyediagram(HS_MSSE, 2*fs, 2);
     title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
-
+    
 end
+
+figure,
+subplot(3,1,1)
+plot(HS_MSSE)
+title('output of equalizer')
+subplot(3,1,2)
+plot(hs_modulated)
+title('output of modulated signal')
+subplot(3,1,3)
+plot(post_channel_hs)
+title('output of channel')

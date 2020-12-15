@@ -1,7 +1,11 @@
-function signalRecovered = MMSEEqualizer(signal, sigma2, channel_impulse_resp)
+%function signalRecovered = MMSEEqualizer(signal, sigma2, channel_impulse_resp)
+%HS_MSSE   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
-NFFT = length(signal)*100;
+signal = hs_convolved;
+sigma2 = sqrtNsPowr2;
+channel_impulse_resp = channel_impulse_response;
 
+NFFT = length(signal)*20;
 % define energy Eb of pulse for SNR calculation:
 % Eb = (norm(g_t))^2;
 Eb = 1;
@@ -12,9 +16,7 @@ SNR  = sigma2./Eb;
 
 %H = fft(downsample(channel_impulse_resp, 31));
 
-NFFT = 32;
-
-h_upsample = upsample(channel_impulse_resp, 31);
+h_upsample = channel_impulse_resp;
 H = (fft(h_upsample, NFFT));
 %H = fft(channel_impulse_resp);
 %H = fft(channel_impulse_resp);
@@ -30,14 +32,28 @@ Xf = fft(signal, NFFT);
 % fine the frequency response using fft method:
 % Xf = 1x3233
 % HMMSE = 
-signalRecovered = ifft(Xf.*HMMSE, NFFT);
-signalRecovered = conv(signal, ifft(HMMSE));
-figure, 
-subplot(2,1,1)
-plot(signalRecovered)
-title('recovered signal using Half Sine Zero forcing equalized')
-subplot(2,1,2)
+signalRecovered = conv(signal, ifft(HMMSE, NFFT));
+trimmed = signalRecovered(1:length(hs_convolved));    
+
+figure,
+subplot(5,1,1)
+plot(trimmed)
+title('output of equalizer')
+subplot(5,1,2)
 plot(hs_convolved)
-title('original half sine modulated signal')
-    
-end
+title('after matched filter:')
+subplot(5,1,3)
+plot(hs_modulated)
+title('output of modulated signal')
+subplot(5,1,4)
+plot(post_channel_hs)
+title('output of channel')
+subplot(5,1,5)
+plot(half_sine_filtered_noisy)
+title('noisy signal through channel')
+
+% plot the convolution of the impulse response of the equalizer and the
+% channel:
+figure, 
+plot(conv(channel_impulse_resp, ifft(HMMSE)))
+%end
