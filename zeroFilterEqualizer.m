@@ -1,10 +1,6 @@
 % Olive Garst
 % Dec. 2020
-%function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal)
-
-channelResponse = channel_impulse_response;
-signal = hs_convolved;
-
+function trimmed = zeroFilterEqualizer(channelResponse, signal)
 % Inputs:   channel impulse response
 %           signal to be equalize
 %           
@@ -47,46 +43,8 @@ hzt = (ifft(HZF, NFFT));
 % make the signal output: 
 
 forcedZeroSign = conv(hzt,signal2);
+total_convolution_length = length(conv(hzt, channelResponse2)) + 1;
+desired_length = length(forcedZeroSign) - total_convolution_length + 1;
+trimmed = forcedZeroSign(1:desired_length+1);
 
-sprintf('length channel = %g',length(channelResponse2))
-sprintf('length H = %g',length(H))
-sprintf('length hzt = %g',length(hzt))
-sprintf('length received signal = %g',length(forcedZeroSign))
-sprintf('length signal = %g',length(signal2))
-
-figure,
-subplot(3,1,1)
-plot(forcedZeroSign)
-subplot(3,1,2)
-plot(hs_modulated)
-subplot(3,1,3)
-plot(post_channel_hs)
-
-%end
-% 
-% % Olive Garst
-% % Dec. 2020
-% T_bit = 1;
-% fs = 32;
-% %signal = randi([0 1], 1, 10);
-% % signal = [0 0 1 1 1 0 1 1 0 1];
-% 
-% % [rxSRRC, rxHS, channel] = modulator(T_bit, fs, signal);
-% rxSRRC = srrc_convolved;
-% rxHS = srrc_matched_filter_impulse;
-% 
-% % signal = rxSRRC;
-% 
-% %% to do : get channel 
-% 
-% %%
-% % EE 107 final project 
-% h = zeros(1,4);
-% h(1) = 1;
-% h(2) = 0.5;
-% h(3) = 0.75;
-% h(4) = -2/7;
-% 
-% % for debugging:
-% channelResponse = h;
-% channel = h;
+end

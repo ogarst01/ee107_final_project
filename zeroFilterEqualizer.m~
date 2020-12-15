@@ -1,76 +1,59 @@
-%function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal)
+% Olive Garst
+% Dec. 2020
+function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal)
+% Inputs:   channel impulse response
+%           signal to be equalize
+%           
+% Outputs: equalized signal
 
-channelResponse = channel_impulse_response;
-signal = srrc_convolved;
+% do not put 0's at the last bit (don't pad)
 
-H = (fft(channelResponse, length(channel_impulse_response)));
+signal2 = signal;%srrc_convolved;
 
-% TODO - figure out how to truncate? 
+channelResponse2 = channelResponse;
+
+NFFT = 10*length(signal);
+
+H = fft(channelResponse2, NFFT);
 
 % invert to make the Zero forcing response:
 HZF = 1./H;
 
-hzt = (ifft(HZF,length(channel_impulse_response)));
-
-figure, 
-hold on
-plot(abs(HZF), 'g')
-plot(abs(H), 'r')
-legend('ZF', 'channel')
-hold off
-title('zero forcing freq response vs. channel freq response')
-
-%%
-figure, plot(abs(H.*HZF))
-title('plot to check the H * HZF = 1')
+hzt = (ifft(HZF, NFFT));
+% 
+% figure, 
+% hold on
+% plot(abs(HZF), 'g')
+% plot(abs(H), 'r')
+% legend('ZF', 'channel')
+% hold off
+% title('zero forcing freq response vs. channel freq response')
+% 
+% %%
+% figure, plot(abs(H.*HZF))
+% title('plot to check the H * HZF = 1')
 
 
 %% Plot in time the impulse response of the equalizer:
-figure, 
-plot(real(hzt))
-title('equalizer impulse response in time')
+% figure, 
+% plot(hzt)
+% title('equalizer impulse response in time')
 
 %%
-HZF = fftshift(fft(1./H));
-
 % make the signal output: 
-forcedZeroSign = conv(hzt, signal);
 
-figure,
-plot(conv(hzt,))
+forcedZeroSign = conv(hzt,signal2);
 
-figure, 
-subplot(2,1,1)
-plot(real(forcedZeroSign))
-title('output signal after convolution in time')
-subplot(2,1,2)
-plot(signal)
-title('original signal')
-%end
-% 
-% % Olive Garst
-% % Dec. 2020
-% T_bit = 1;
-% fs = 32;
-% %signal = randi([0 1], 1, 10);
-% % signal = [0 0 1 1 1 0 1 1 0 1];
-% 
-% % [rxSRRC, rxHS, channel] = modulator(T_bit, fs, signal);
-% rxSRRC = srrc_convolved;
-% rxHS = srrc_matched_filter_impulse;
-% 
-% % signal = rxSRRC;
-% 
-% %% to do : get channel 
-% 
-% %%
-% % EE 107 final project 
-% h = zeros(1,4);
-% h(1) = 1;
-% h(2) = 0.5;
-% h(3) = 0.75;
-% h(4) = -2/7;
-% 
-% % for debugging:
-% channelResponse = h;
-% channel = h;
+sprintf('length channel = %g',length(channelResponse2))
+sprintf('length H = %g',length(H))
+sprintf('length hzt = %g',length(hzt))
+sprintf('length received signal = %g',length(forcedZeroSign))
+sprintf('length signal = %g',length(signal2))
+
+
+forcedZeroSign = conv(hzt,signal);
+total_convolution_length = length(conv(hzt, channelResponse2)) + 1;
+desired_length = length(forcedZeroSign) - total_convolution_length + 1;
+trimmed = forcedZeroSign(1:desired_length+1);
+
+end
