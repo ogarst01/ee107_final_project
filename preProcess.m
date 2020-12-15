@@ -20,9 +20,7 @@ decStream = bitStreamToChunk(bitStream, qbits, m, n, numLayers);
 % pipeline: 
 
 
-newZ = ImagePostProcess_gray(decStream,r,c,m,n,minval,maxval)
-
-
+newZ = ImagePostProcess_gray(Ztres,r,c,m,n,minval,maxval)
 % snr(newZ,X)
 %%
 max(max(abs(rescale(double(X)) - rescale(double(newZ)))))
