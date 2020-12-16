@@ -1,9 +1,9 @@
-%%
+%function [hs_pixels,srrc_pixels] = main(signal)
 
 % define some constants:
 T_bit = 1;
 fs = 32;
-signal = randi([0 1], 1, 104);
+signal = randi([0 1], 1, 1984512);
 % signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
@@ -69,6 +69,8 @@ if (displayModulate)
     eyediagram(srrc_modulated, T_bit*fs, 1, 16);
     title("Eye Diagram: SRRC-PCM");
 end
+
+"Modulated the signal"
 %% Channel Distortion
 
 [channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated, channelType);
@@ -107,23 +109,24 @@ if(displayChannel)
     eyediagram(post_channel_srrc, num_windows*T_bit*fs, 1, 16);
     title("Eye Diagram: SRRC Pulse Filtered ");
 end
+"Channel the signal"
 %% White Gaussian Noise
 
 % whether or not to display images of different noise powers: 
 testing = false;
 % sqrt of noise power: 
 sqrtNsPowr2 = 0;
-[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
+%[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
 
 % for debugging - with no noise:
-%srrc_filtered_noisy = post_channel_srrc;
-%half_sine_filtered_noisy = post_channel_hs;
-
+srrc_filtered_noisy = post_channel_srrc;
+half_sine_filtered_noisy = post_channel_hs;
+"Noised the signal"
 %% Matched Filter
 graphImpulse = false;
 [srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(post_channel_srrc, post_channel_hs, graphImpulse);
 
-if (1)
+if (0)
     figure(40);
     plot_end = (length(hs_convolved)-1)/fs;
     plot(0:1/fs:(length(hs_convolved)-1)/fs, hs_convolved);
@@ -148,6 +151,7 @@ if (1)
     eyediagram(srrc_convolved, 2*fs, 2);
     title("Eye Diagram: SRRC Matched Filter Output, 2 periods");
 end
+"Matched the signal"
 
 %% Equalizers
 
@@ -155,7 +159,7 @@ end
 [SRRC_equalized, hzt, ht, t, HZF, H, f] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs);
 [HS_equalized, ~, ~, ~, ~, ~]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs);
 
-if(1)
+if(0)
     
     figure, 
     subplot(4,1,1)
@@ -213,13 +217,14 @@ if(1)
     eyediagram(HS_equalized, 2*fs, 2);
     title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
 end
+"ZF Eq the signal"
 
 %% MMSE Equalizer code: 
 
 [SRRC_MSSE, HMMSE1] = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
 [HS_MSSE, HMMSE2]   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
-if(1)
+if(0)
     figure, 
     subplot(2,1,1)
     plot(SRRC_MSSE)
@@ -312,6 +317,8 @@ if(1)
     xlabel('time')
     ylabel('amplitude')
 end
+"MMSE Eq the signal"
+
 %%
 % test with various noise levels (3.21)
 noiseVec = [0,0.0001,0.001,0.01,10000];
@@ -411,6 +418,7 @@ if(0)
     xlabel("Bit Index");
     ylabel("Bit");
 end
+"Sampled the signal"
 
 %% Rearrange Data
 
@@ -420,55 +428,57 @@ hs_pixels = reshape(hs_bits, [8, num_pixels])';
 num_pixels = ceil(length(srrc_bits) / 8);
 srrc_pixels = reshape(srrc_bits, [8, num_pixels])';
 
+
 % Find signal to noise ratio: (ideally is 0 db = 1 -> signal to noise
 % ratio of 1
-SNR_hs   = snr(double(hs_bits), signal);
-SNR_srrc = snr(double(srrc_bits), signal);
+% SNR_hs   = snr(double(hs_bits), signal);
+% SNR_srrc = snr(double(srrc_bits), signal);
 
-figure,
-subplot(2,1,1)
-stem(double(hs_bits))
-title('Recovered Signal Using Half Sine Pulse + ZF Equalizer')
-subplot(2,1,2)
-stem(signal)
-title('Original Signal')
-
-figure,
-subplot(2,1,1)
-stem(double(srrc_bits))
-title('Recovered Signal Using SRRC Pulse + ZF Equalizer')
-subplot(2,1,2)
-stem(signal)
-title('Original Signal')
-
-figure,
-subplot(2,1,1)
-stem(double(hs_bits_MMSE))
-title('Recovered Signal Using Half Sine Pulse')
-subplot(2,1,2)
-stem(signal)
-title('Original Signal')
-
-figure,
-subplot(2,1,1)
-stem(double(srrc_bits_MMSE))
-title('Recovered Signal Using SRRC Pulse')
-subplot(2,1,2)
-stem(signal)
-title('Original Signal')
-%%
-figure,
-plot(double(srrc_bits_MMSE) - signal, 'r')
-title('error plot for SRRC')
-ylim([-2,2])
-
-figure,
-plot(double(hs_bits_MMSE) - signal, 'r')
-title('error plot for HS')
-ylim([-2,2])
+% figure,
+% subplot(2,1,1)
+% stem(double(hs_bits))
+% title('Recovered Signal Using Half Sine Pulse + ZF Equalizer')
+% subplot(2,1,2)
+% stem(signal)
+% title('Original Signal')
+% 
+% figure,
+% subplot(2,1,1)
+% stem(double(srrc_bits))
+% title('Recovered Signal Using SRRC Pulse + ZF Equalizer')
+% subplot(2,1,2)
+% stem(signal)
+% title('Original Signal')
+% 
+% figure,
+% subplot(2,1,1)
+% stem(double(hs_bits_MMSE))
+% title('Recovered Signal Using Half Sine Pulse')
+% subplot(2,1,2)
+% stem(signal)
+% title('Original Signal')
+% 
+% figure,
+% subplot(2,1,1)
+% stem(double(srrc_bits_MMSE))
+% title('Recovered Signal Using SRRC Pulse')
+% subplot(2,1,2)
+% stem(signal)
+% title('Original Signal')
+% %%
+% figure,
+% plot(double(srrc_bits_MMSE) - signal, 'r')
+% title('error plot for SRRC')
+% ylim([-2,2])
+% 
+% figure,
+% plot(double(hs_bits_MMSE) - signal, 'r')
+% title('error plot for HS')
+% ylim([-2,2])
 %% TO DO: 
 % - Why is the SNR always 0? Could something be going wrong
 % - How to input images, etc.
 % - Clean up main - there's too many outputs being printed - will take 
 %   forever to run
 % - try diff channel types early - this messed the whole thing up
+% end

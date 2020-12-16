@@ -10,7 +10,7 @@ function [trimmed, hzt, channelResponse2, t, HZF, H, f] = zeroFilterEqualizer(ch
 
 channelResponse2 = channelResponse;
 
-NFFT = 10*length(signal);
+NFFT = 2^12;
 H = fft(channelResponse2, NFFT);
 
 % invert to make the Zero forcing response:

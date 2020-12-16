@@ -7,16 +7,20 @@ qbits = 8;
 % define some dimensions for the system:
 [L,W,H] = size(Ztres);
 
-N = 64;
+MM = r*c;
 % only grab first slice: 
-DCT_chunk = Ztres(:,:,(1:N));
+DCT_chunk = Ztres(:,:,(1:MM));
 
-[bitStream] = convertToBitStream(DCT_chunk,L,W,N);
+[bitStream] = convertToBitStream(DCT_chunk,L,W,MM);
 %%
-decStream = bitStreamToChunk(bitStream, qbits,L,W, N);
+[bitStreamHS, bitStreamSRRC] = main(bitStream);
+
+%%
+
+decStream = bitStreamToChunk(bitStreamSRRC, qbits,L,W, MM);
 %%TODO: test whether can retreive the data too...
 
 %% Next - feed this through the second part of the image processing
 % pipeline: 
 
-ImagePostProcess_gray(decStream,r,c,L,W,minval,maxval)
+ImagePostProcess_gray(decStream,r,c,m,n,minval,maxval)

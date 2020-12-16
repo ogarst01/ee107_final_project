@@ -1,6 +1,5 @@
 function []=ImagePostProcess_gray(Ztres,r,c,m,n,minval,maxval)
-r = 64
-c = 1
+
 vec = reshape(Ztres,8,8,r,c);
 %% invert the reshaping operation
 perMStep = permute(vec, [1 3 2 4]);
