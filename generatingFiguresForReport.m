@@ -466,9 +466,3 @@ figure,
 plot(double(hs_bits_MMSE) - signal, 'r')
 title('error plot for HS')
 ylim([-2,2])
-%% TO DO: 
-% - Why is the SNR always 0? Could something be going wrong
-% - How to input images, etc.
-% - Clean up main - there's too many outputs being printed - will take 
-%   forever to run
-% - try diff channel types early - this messed the whole thing up
