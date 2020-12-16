@@ -1,7 +1,7 @@
 function [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_gray(qbits)
 
 % read the image
-X = imread('image.jpg');
+X = imread('smal.png');
 X = X(:,:,1);
 
 size(X)

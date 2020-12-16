@@ -1,10 +1,10 @@
-%function [bitStreamHS,bitStreamSRRC] = main(signal, sqrtNsPowr2)
-sqrtNsPowr2 = 0.01;
+function [bitStreamHS,bitStreamSRRC] = main(signal, sqrtNsPowr2)
+%sqrtNsPowr2 = 0.01;
 
 % define some constants:
 T_bit = 1;
 fs = 32;
-signal = randi([0 1], 1, 1000);
+% signal = randi([0 1], 1, 1000);
 % signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
@@ -223,7 +223,7 @@ end
 [SRRC_MSSE, HMMSE1] = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
 [HS_MSSE, HMMSE2]   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
 
-if(1)
+if(0)
     figure, 
     subplot(2,1,1)
     plot(SRRC_MSSE)
@@ -406,7 +406,7 @@ hs_bits_MMSE = (hs_symbols + 1) / 2;
 srrc_bits_MMSE = srrc_symbols;
 
 
-if(1)
+if(0)
     figure,
     plot(0:length(signal)-1, signal);
     hold on
@@ -469,30 +469,30 @@ bitStreamSRRC = srrc_bits;
 % stem(signal)
 % title('Original Signal')
 % %%
-figure,
-plot(double(srrc_bits_MMSE) - signal, 'r')
-title('error plot for SRRC - MMSE')
-ylim([-2,2])
-
-figure,
-plot(double(hs_bits_MMSE) - signal, 'r')
-title('error plot for HS - MMSE')
-ylim([-2,2])
-
-figure,
-plot(double(srrc_bits) - signal, 'r')
-title('error plot for SRRC - ZF')
-ylim([-2,2])
-
-figure,
-plot(double(hs_bits) - signal, 'r')
-title('error plot for HS - ZF')
-ylim([-2,2])
+% figure,
+% plot(double(srrc_bits_MMSE) - signal, 'r')
+% title('error plot for SRRC - MMSE')
+% ylim([-2,2])
+% 
+% figure,
+% plot(double(hs_bits_MMSE) - signal, 'r')
+% title('error plot for HS - MMSE')
+% ylim([-2,2])
+% 
+% figure,
+% plot(double(srrc_bits) - signal, 'r')
+% title('error plot for SRRC - ZF')
+% ylim([-2,2])
+% 
+% figure,
+% plot(double(hs_bits) - signal, 'r')
+% title('error plot for HS - ZF')
+% ylim([-2,2])
 %% TO DO: 
 % - Why is the SNR always 0? Could something be going wrong
 % - How to input images, etc.
 % - Clean up main - there's too many outputs being printed - will take 
 %   forever to run
 % - try diff channel types early - this messed the whole thing up
-% end
+end
 %

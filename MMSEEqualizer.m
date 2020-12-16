@@ -1,5 +1,5 @@
 function [trimmed, HMMSE] = MMSEEqualizer(signal, sigma2, channel_impulse_response)
-NFFT = 2^16;
+NFFT = 2*length(signal);
 % define energy Eb of pulse for SNR calculation:
 % Eb = (norm(g_t))^2;
 Eb = 1;

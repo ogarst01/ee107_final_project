@@ -18,16 +18,9 @@ DCT_chunk = Ztres(:,:,(1:MM));
 % break up image into 1000 bit sized chunks:
 lengthChunk = 8*125;
 
-numChunks = length(bitStream)/lengthChunk;
 
-bitStreamHS = [];
-bitStreamSRRC = [];
 
-for i = 1:numChunks
-    [HS, SRCC] = main(bitStream, 0.01);
-    bitStreamHS = [bitStreamHS, HS];
-    bitStreamSRRC = [bitStreamSRRC, SRRC]
-end
+[bitStreamHS, bitStreamSRRC] = main(bitStream, 0.01);
 % bitStreamHS = bitStream;
 
 % num_pixels = ceil(length(bitStreamHS) / 8);
