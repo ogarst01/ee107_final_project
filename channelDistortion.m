@@ -1,8 +1,6 @@
 function [srrc_filtered,half_sine_filtered, h] = channelDistortion(half_sine_modulated, srrc_modulated, channelType)
 if (channelType == 'starter')
 %% channel 1:  
-    lenChannel = 4;
-    N = 32;
     h = zeros(1,4);
     h(1) = 1;
     h(2) = 0.5;
@@ -23,6 +21,7 @@ elseif(channelType == 'outdoor')
 
     % TODO: investigate how to chop off the last zeros here - might be a 
     % problem
+    h = h(1:776);
 elseif(channelType == 'indoor ')
     %% channel 3: indoor channel
     h = [1, 0.4354, 0.1905, 0.0832, 0, 0.0158, 0, 0.003];

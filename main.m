@@ -12,7 +12,7 @@ signal = randi([0 1], 1, 104);
 % Outdoor channel really doesn't work:
 channelType = 'outdoor';
 %channelType = 'indoor ';
-%channelType = 'starter';
+% channelType = 'starter';
 % signal = signalVec;
 
 % to display functions
@@ -445,8 +445,16 @@ title('Recovered Signal Using SRRC Pulse')
 subplot(2,1,2)
 stem(signal)
 title('Original Signal')
+%%
+figure,
+plot(double(srrc_bits_MMSE) - signal, 'r')
+title('error plot for SRRC')
+ylim([-2,2])
 
-
+figure,
+plot(double(hs_bits_MMSE) - signal, 'r')
+title('error plot for HS')
+ylim([-2,2])
 %% TO DO: 
 % - Why is the SNR always 0? Could something be going wrong
 % - How to input images, etc.
