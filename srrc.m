@@ -32,6 +32,18 @@ for idx = 1:length(signal)
        % Do nothing, let the vector remain zero at this element.
    end    
 end
+
+figure,
+plot(pulse)
+
+sum = 0;
+
+for i = 1:length(pulse)
+    sum = sum + (pulse(i)).^2;
+end
+
+sum
+
 srrc_modulated = conv(srrc_modulated, pulse);
 % This will leave a "tail" of zeros after the interesting part of the
 % convolution

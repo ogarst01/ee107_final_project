@@ -1,8 +1,6 @@
 function [output] = sample_hs(input)
 
 % Given a continuous time Half-Sine input signal, return a bit sequence.
-
-
 input = input(33:end);
 output = downsample(input, 32);
 

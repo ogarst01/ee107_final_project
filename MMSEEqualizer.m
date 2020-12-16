@@ -1,5 +1,5 @@
 function [trimmed, HMMSE] = MMSEEqualizer(signal, sigma2, channel_impulse_response)
-NFFT = 2^12;
+NFFT = 2^16;
 % define energy Eb of pulse for SNR calculation:
 % Eb = (norm(g_t))^2;
 Eb = 1;
@@ -15,8 +15,7 @@ Hconj = conj(H);
 % calculate the frequency response of the MMSE Equalizer:
 HMMSE = Hconj./((abs(H)).^2 + (SNR));
 
-% fine the frequency response using convolution method: 
-signalRecovered = conv(signal, ifft(HMMSE, NFFT));
+signalRecovered = ifft(HMMSE.*fft(signal,length(HMMSE)));
 
 % trim the output since Matlab pads with 0's for convolution
 trimmed = signalRecovered(1:(length(signal)-length(channel_impulse_response)));    

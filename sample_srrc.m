@@ -4,6 +4,5 @@ output = downsample(input, 32);
 
 output = output > 0.5;
 output = output(7:end-6);
-
 end
 
