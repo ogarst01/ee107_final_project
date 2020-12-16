@@ -1,9 +1,9 @@
-%function [hs_pixels,srrc_pixels] = main(signal)
+function [bitStreamHS,bitStreamSRRC] = main(signal, sqrtNsPowr2)
 
 % define some constants:
 T_bit = 1;
 fs = 32;
-signal = randi([0 1], 1, 1984512);
+% signal = randi([0 1], 1, 1984512);
 % signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
@@ -115,16 +115,14 @@ end
 % whether or not to display images of different noise powers: 
 testing = false;
 % sqrt of noise power: 
-sqrtNsPowr2 = 0;
-%[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
+
+[srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
 
 % for debugging - with no noise:
-srrc_filtered_noisy = post_channel_srrc;
-half_sine_filtered_noisy = post_channel_hs;
 "Noised the signal"
 %% Matched Filter
 graphImpulse = false;
-[srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(post_channel_srrc, post_channel_hs, graphImpulse);
+[srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(srrc_filtered_noisy, half_sine_filtered_noisy, graphImpulse);
 
 if (0)
     figure(40);
@@ -418,15 +416,16 @@ if(0)
     xlabel("Bit Index");
     ylabel("Bit");
 end
+
+
 "Sampled the signal"
 
+
+bitStreamHS = hs_bits;
+bitStreamSRRC = srrc_bits;
 %% Rearrange Data
 
-num_pixels = ceil(length(hs_bits) / 8);
-hs_pixels = reshape(hs_bits, [8, num_pixels])';
 
-num_pixels = ceil(length(srrc_bits) / 8);
-srrc_pixels = reshape(srrc_bits, [8, num_pixels])';
 
 
 % Find signal to noise ratio: (ideally is 0 db = 1 -> signal to noise
@@ -481,4 +480,4 @@ srrc_pixels = reshape(srrc_bits, [8, num_pixels])';
 % - Clean up main - there's too many outputs being printed - will take 
 %   forever to run
 % - try diff channel types early - this messed the whole thing up
-% end
+ end
