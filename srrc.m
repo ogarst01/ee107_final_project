@@ -9,7 +9,7 @@ t_pulse = t_pulse(1:length(t_pulse)-1);
 alpha = 0.5;
 pulse_num = sin(pi*t_pulse*(1-alpha)/T_bit) + 4*alpha*(t_pulse/T_bit).*cos(pi*(t_pulse/T_bit)*(1+alpha));
 pulse_denom = pi*(t_pulse/T_bit).*(1 - (4*alpha*t_pulse/T_bit).^2);
-pulse = pulse_num./pulse_denom
+pulse = pulse_num./pulse_denom;
 
 % Special indices of x(t)
 zero_idx = find(t_pulse==0);

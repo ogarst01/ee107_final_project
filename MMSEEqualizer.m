@@ -21,9 +21,4 @@ signalRecovered = conv(signal, ifft(HMMSE, NFFT));
 % trim the output since Matlab pads with 0's for convolution
 trimmed = signalRecovered(1:(length(signal)-length(channel_impulse_response)));    
 
-%%
-% plotting the frequency response of the MMSE filter:
-figure,
-freqz(fft(signalRecovered, NFFT))
-title('frequency response')
 end

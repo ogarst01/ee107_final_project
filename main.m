@@ -4,11 +4,15 @@
 T_bit = 1;
 fs = 32;
 signal = randi([0 1], 1, 104);
-% %signal = [0 0 1 1 1 0 1 1 0 1];
+% signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
 % signal(50) = 1;
 
+% Outdoor channel really doesn't work:
+channelType = 'outdoor';
+%channelType = 'indoor ';
+%channelType = 'starter';
 % signal = signalVec;
 
 % to display functions
@@ -16,7 +20,7 @@ displayModulate = false;
 displayChannel = false;
 displayMatched = false;
 plotZFEqualizer = false;
-plotMMSEqualizer = true; 
+plotMMSEqualizer = false; 
 %% Modulate signal:
 % make the transmitted signal, thru channel + add noise: 
 [srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
@@ -67,7 +71,7 @@ if (displayModulate)
 end
 %% Channel Distortion
 
-[channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated);
+[channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated, channelType);
 
 if(displayChannel)
     % SRRC time-domain signal post-distortion
@@ -111,7 +115,7 @@ testing = false;
 sqrtNsPowr2 = 0;
 [srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
 
-
+% for debugging - with no noise:
 %srrc_filtered_noisy = post_channel_srrc;
 %half_sine_filtered_noisy = post_channel_hs;
 
@@ -283,6 +287,18 @@ if(0)
     figure, 
     plot(conv(channel_impulse_response, ifft(HMMSE2)))
     title('Dirac Delta check for the HS pulse')
+    
+    % plot frequency responses of the 2 pulses:
+    % plotting the frequency response of the MMSE filter:
+    figure,
+    NFFT = length(srrc_modulated)*20;
+    freqz(HMMSE1)
+    title('frequency response')
+    
+    figure,
+    NFFT = length(hs_modulated)*20;
+    freqz(HMMSE2)
+    title('frequency response')
 
 end
 %%
@@ -290,7 +306,7 @@ end
 noiseVec = [0,0.0001,0.001,0.01,10000];
 SNR_hsTesting = zeros(1,length(noiseVec));
 SNR_srrcTesting = zeros(1,length(noiseVec));
-if(1)
+if(0)
     for i = 1:length(noiseVec)
         % run all the equalizers for the various noise levels:
         % add noise:
@@ -358,12 +374,20 @@ end
 
 %% Sampling
 
+% grab bits from ZF equalizer
 [hs_symbols] = sample_hs(HS_equalized);
 hs_bits = (hs_symbols + 1) / 2;
 
-
 [srrc_symbols] = sample_srrc(SRRC_equalized);
 srrc_bits = srrc_symbols;
+
+% grab bits from MMSE equalizer
+[hs_symbols] = sample_hs(HS_MSSE);
+hs_bits_MMSE = (hs_symbols + 1) / 2;
+
+[srrc_symbols] = sample_srrc(SRRC_MSSE);
+srrc_bits_MMSE = srrc_symbols;
+
 
 if(0)
     figure,
@@ -389,6 +413,38 @@ srrc_pixels = reshape(srrc_bits, [8, num_pixels])';
 % ratio of 1
 SNR_hs   = snr(double(hs_bits), signal);
 SNR_srrc = snr(double(srrc_bits), signal);
+
+figure,
+subplot(2,1,1)
+stem(double(hs_bits))
+title('Recovered Signal Using Half Sine Pulse + ZF Equalizer')
+subplot(2,1,2)
+stem(signal)
+title('Original Signal')
+
+figure,
+subplot(2,1,1)
+stem(double(srrc_bits))
+title('Recovered Signal Using SRRC Pulse + ZF Equalizer')
+subplot(2,1,2)
+stem(signal)
+title('Original Signal')
+
+figure,
+subplot(2,1,1)
+stem(double(hs_bits_MMSE))
+title('Recovered Signal Using Half Sine Pulse')
+subplot(2,1,2)
+stem(signal)
+title('Original Signal')
+
+figure,
+subplot(2,1,1)
+stem(double(srrc_bits_MMSE))
+title('Recovered Signal Using SRRC Pulse')
+subplot(2,1,2)
+stem(signal)
+title('Original Signal')
 
 
 %% TO DO: 

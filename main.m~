@@ -8,7 +8,9 @@ signal = randi([0 1], 1, 104);
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
 % signal(50) = 1;
-
+channelType = 'outdoor';
+channelType = 'indoor ';
+channelType = 'starter';
 % signal = signalVec;
 
 % to display functions
@@ -16,7 +18,7 @@ displayModulate = false;
 displayChannel = false;
 displayMatched = false;
 plotZFEqualizer = false;
-plotMMSEqualizer = true; 
+plotMMSEqualizer = false; 
 %% Modulate signal:
 % make the transmitted signal, thru channel + add noise: 
 [srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
@@ -67,7 +69,7 @@ if (displayModulate)
 end
 %% Channel Distortion
 
-[channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated);
+[channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated, channelType);
 
 if(displayChannel)
     % SRRC time-domain signal post-distortion
@@ -111,7 +113,7 @@ testing = false;
 sqrtNsPowr2 = 0;
 [srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
 
-
+% for debugging - with no noise:
 %srrc_filtered_noisy = post_channel_srrc;
 %half_sine_filtered_noisy = post_channel_hs;
 
@@ -283,6 +285,8 @@ if(0)
     figure, 
     plot(conv(channel_impulse_response, ifft(HMMSE2)))
     title('Dirac Delta check for the HS pulse')
+    
+    
 
 end
 %%
@@ -394,4 +398,6 @@ SNR_srrc = snr(double(srrc_bits), signal);
 %% TO DO: 
 % - Why is the SNR always 0? Could something be going wrong
 % - How to input images, etc.
-% - 
+% - Clean up main - there's too many outputs being printed - will take 
+%   forever to run
+% - try diff channel types early - this messed the whole thing up
