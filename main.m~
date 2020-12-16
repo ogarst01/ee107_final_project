@@ -394,6 +394,4 @@ SNR_srrc = snr(double(srrc_bits), signal);
 %% TO DO: 
 % - Why is the SNR always 0? Could something be going wrong
 % - How to input images, etc.
-% - Clean up main - there's too many outputs being printed - will take 
-%   forever to run
-% - try diff channel types early - this messed the whole thing up
+% - 

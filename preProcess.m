@@ -2,7 +2,6 @@ clear
 close all
 % converts into 8x8 DCT chunks:
 qbits = 8;
-filename = 'image.jpg';
 [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_gray(qbits);
 
 % define some dimensions for the system:
