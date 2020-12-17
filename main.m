@@ -7,7 +7,7 @@ fs = 32;
 
 signal = randi([0 1], 1, 100);
 % signal = [0 0 1 1 1 0 1 1 0 1];
-% signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
+signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
 % signal(50) = 1;
 
@@ -27,7 +27,7 @@ plotMMSEqualizer = false;
 % make the transmitted signal, thru channel + add noise: 
 [srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
 
-if (displayModulate)
+if (1)
     figure(1);
     clf;
     subplot(2, 1, 1);

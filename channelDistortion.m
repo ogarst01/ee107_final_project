@@ -17,7 +17,7 @@ elseif(channelType == 'outdoor')
     h = [0.5 1 0 0.63 0 0 0 0 0.25 0 0 0 0.16 0 0 0 0 0 0 0 0 0 0 0 0 0.1];
 
     % pad with zeos:
-    h = upsample(h,31);
+    h = upsample(h,32);
 
     % TODO: investigate how to chop off the last zeros here - might be a 
     % problem
@@ -26,7 +26,7 @@ elseif(channelType == 'indoor ')
     %% channel 3: indoor channel
     h = [1, 0.4354, 0.1905, 0.0832, 0, 0.0158, 0, 0.003];
 
-    h = upsample(h,31);
+    h = upsample(h,32);
 else
     sprintf('\n\nERROR: VALID CHANNEL TYPE NOT SPECIFIED \n\n')
     sprintf('please choose: indoor outdoor or startChannel + run again')

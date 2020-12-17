@@ -5,7 +5,7 @@ sqrtNsPowr = [0.001,0.1,1,10,100];
 
 % generate random numbers: 
 noiseHS   = randn(1,length(half_sine_filtered));
-% noiseSRRC = randn(1,length(srrc_filtered));
+noiseSRRC = randn(1,length(srrc_filtered));
 
 if(testing == true)
 % iterate throught different values: 
@@ -30,7 +30,7 @@ if(testing == true)
 else 
 % use the specified noise power:
     noiseHS2    = sqrt(sqrtNsPowr2)*noiseHS;
-    noiseSRRC2  = sqrt(sqrtNsPowr2)*noiseHS;
+    noiseSRRC2  = sqrt(sqrtNsPowr2)*noiseSRRC;
     
     % add additive noise to filtered signals:
     half_sine_filtered_noisy = half_sine_filtered + noiseHS2;

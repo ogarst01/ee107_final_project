@@ -4,18 +4,20 @@ NFFT = 2*length(signal);
 % Eb = (norm(g_t))^2;
 Eb = 1;
 
+lengthOriginal = length(signal);
+
 % calculate SNR given noise power sigma squared(sigma2)
 SNR  = sigma2./Eb;
 
 h_upsample = channel_impulse_response;
-H = (fft(h_upsample, NFFT));
+H = (fft(h_upsample, lengthOriginal));
 
 Hconj = conj(H);
 
 % calculate the frequency response of the MMSE Equalizer:
 HMMSE = Hconj./((abs(H)).^2 + (SNR));
 
-signalRecovered = ifft(HMMSE.*fft(signal,length(HMMSE)));
+signalRecovered = ifft(HMMSE.*fft(signal));
 
 % trim the output since Matlab pads with 0's for convolution
 trimmed = signalRecovered;    

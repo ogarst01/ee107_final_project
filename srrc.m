@@ -1,4 +1,4 @@
-function [srrc_modulated, t] = srrc(signal, T_bit, K, fs)
+function [srrc_modulated, t, pulse] = srrc(signal, T_bit, K, fs)
 
 Ts = 1/fs;
 
@@ -29,6 +29,7 @@ for idx = 1:length(signal)
    if signal(idx) > 0
        srrc_modulated(T_bit*fs*(idx-1)+1) = 1;
    else
+       srrc_modulated(T_bit*fs*(idx-1)+1) = -1;
        % Do nothing, let the vector remain zero at this element.
    end    
 end
@@ -47,5 +48,5 @@ end
 srrc_modulated = conv(srrc_modulated, pulse);
 % This will leave a "tail" of zeros after the interesting part of the
 % convolution
-srrc_modulated = srrc_modulated(1+K*fs*T_bit:length(srrc_modulated)-K*fs*T_bit+1);
+% srrc_modulated = srrc_modulated(1+K*fs*T_bit:length(srrc_modulated)-K*fs*T_bit+1);
 end

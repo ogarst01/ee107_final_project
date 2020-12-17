@@ -12,10 +12,12 @@ MM = r*c;
 [bitStream] = convertToBitStream(Ztres,L,W,MM);
 
 %%
-noiseLevel = 0;
+noiseLevel = 0.0;
 % chose your desired equalizer:
-type = 'Z.F.';
-%type = 'MMSE';
+% type = 'Z.F.';
+type = 'MMSE';
+
+test_seq = randi([0 1], 1, 10);
 [bitStreamHS, bitStreamSRRC] = quickerMain(bitStream, noiseLevel, type);
 
 %%

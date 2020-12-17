@@ -12,15 +12,17 @@ fs = 32;
 % signal = zeros(1, 100);
 % signal(50) = 1;
 
+% signal = [1 0 0 0];
+
 % Outdoor channel really doesn't work:
-channelType = 'outdoor';
+% channelType = 'outdoor';
 %channelType = 'indoor ';
-%channelType = 'starter';
+channelType = 'starter';
 % signal = signalVec;
 
 %% Modulate signal:
 % make the transmitted signal, thru channel + add noise: 
-[srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
+[srrc_modulated, hs_modulated, t, K, ~] = modulator(T_bit, fs, signal);
 
 %% Channel Distortion
 
