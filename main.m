@@ -1,19 +1,20 @@
-function [bitStreamHS,bitStreamSRRC] = main(signal, sqrtNsPowr2)
-%sqrtNsPowr2 = 0.01;
+%function [bitStreamHS,bitStreamSRRC] = main(signal, sqrtNsPowr2)
+sqrtNsPowr2 = 0;
 
 % define some constants:
 T_bit = 1;
 fs = 32;
-% signal = randi([0 1], 1, 1000);
+
+signal = randi([0 1], 1, 100);
 % signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
 % signal(50) = 1;
 
 % Outdoor channel really doesn't work:
-%channelType = 'outdoor';
+channelType = 'outdoor';
 %channelType = 'indoor ';
-channelType = 'starter';
+%channelType = 'starter';
 % signal = signalVec;
 
 % to display functions
@@ -71,7 +72,6 @@ if (displayModulate)
     title("Eye Diagram: SRRC-PCM");
 end
 
-"Modulated the signal"
 %% Channel Distortion
 
 [channel_impulse_response, post_channel_srrc, post_channel_hs] = channel(srrc_modulated,hs_modulated, channelType);
@@ -110,7 +110,6 @@ if(displayChannel)
     eyediagram(post_channel_srrc, num_windows*T_bit*fs, 1, 16);
     title("Eye Diagram: SRRC Pulse Filtered ");
 end
-"Channel the signal"
 %% White Gaussian Noise
 
 % whether or not to display images of different noise powers: 
@@ -120,7 +119,6 @@ testing = false;
 [srrc_filtered_noisy,half_sine_filtered_noisy] = addNoise(post_channel_hs, post_channel_srrc, testing, sqrtNsPowr2, T_bit, fs);
 
 % for debugging - with no noise:
-"Noised the signal"
 %% Matched Filter
 graphImpulse = false;
 [srrc_convolved, srrc_matched_filter_impulse, hs_convolved, hs_matched_filter_impulse] = matchedFilter(srrc_filtered_noisy, half_sine_filtered_noisy, graphImpulse);
@@ -150,7 +148,6 @@ if (0)
     eyediagram(srrc_convolved, 2*fs, 2);
     title("Eye Diagram: SRRC Matched Filter Output, 2 periods");
 end
-"Matched the signal"
 
 %% Equalizers
 
@@ -158,7 +155,7 @@ end
 [SRRC_equalized, hzt, ht, t, HZF, H, f] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs);
 [HS_equalized, ~, ~, ~, ~, ~]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs);
 
-if(0)
+if(1)
     
     figure, 
     subplot(4,1,1)
@@ -215,8 +212,12 @@ if(0)
      
     eyediagram(HS_equalized, 2*fs, 2);
     title("Eye Diagram: HS Zero Forcing Equalizer Output, 2 periods");
+    
+    figure, 
+    plot(conv(channel_impulse_response, hzt))
+    title('Dirac Delta check for the SRRC pulse')
+
 end
-"ZF Eq the signal"
 
 %% MMSE Equalizer code: 
 
@@ -316,7 +317,6 @@ if(0)
     xlabel('time')
     ylabel('amplitude')
 end
-"MMSE Eq the signal"
 
 %%
 % test with various noise levels (3.21)
@@ -468,31 +468,32 @@ bitStreamSRRC = srrc_bits;
 % subplot(2,1,2)
 % stem(signal)
 % title('Original Signal')
-% %%
-% figure,
-% plot(double(srrc_bits_MMSE) - signal, 'r')
-% title('error plot for SRRC - MMSE')
-% ylim([-2,2])
-% 
-% figure,
-% plot(double(hs_bits_MMSE) - signal, 'r')
-% title('error plot for HS - MMSE')
-% ylim([-2,2])
-% 
-% figure,
-% plot(double(srrc_bits) - signal, 'r')
-% title('error plot for SRRC - ZF')
-% ylim([-2,2])
-% 
-% figure,
-% plot(double(hs_bits) - signal, 'r')
-% title('error plot for HS - ZF')
-% ylim([-2,2])
+%%
+figure,
+plot(double(srrc_bits_MMSE) - signal, 'r')
+title('error plot for SRRC - MMSE')
+ylim([-2,2])
+
+figure,
+plot(double(hs_bits_MMSE) - signal, 'r')
+title('error plot for HS - MMSE')
+ylim([-2,2])
+
+figure,
+plot(double(srrc_bits) - signal, 'r')
+title('error plot for SRRC - ZF')
+ylim([-2,2])
+
+figure,
+plot(double(hs_bits) - signal, 'r')
+title('error plot for HS - ZF')
+ylim([-2,2])
 %% TO DO: 
 % - Why is the SNR always 0? Could something be going wrong
 % - How to input images, etc.
 % - Clean up main - there's too many outputs being printed - will take 
 %   forever to run
 % - try diff channel types early - this messed the whole thing up
-end
+%end
 %
+% end

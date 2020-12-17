@@ -2,7 +2,6 @@ clear
 close all
 % converts into 8x8 DCT chunks:
 qbits = 8;
-
 [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_gray(qbits);
 
 % define some dimensions for the system:
@@ -13,32 +12,23 @@ MM = r*c;
 DCT_chunk = Ztres(:,:,(1:MM));
 
 [bitStream] = convertToBitStream(DCT_chunk,L,W,MM);
-%%
-
-% break up image into 1000 bit sized chunks:
-lengthChunk = 8*125;
-
-numChunks = length(bitStream)/lengthChunk;
-
-bitStreamHS = [];
-bitStreamSRRC = [];
-
-for i = 1:numChunks
-    [HS, SRCC] = main(bitStream, 0.01);
-    bitStreamHS = [bitStreamHS, HS];
-    bitStreamSRRC = [bitStreamSRRC, SRRC]
-end
-% bitStreamHS = bitStream;
-
-% num_pixels = ceil(length(bitStreamHS) / 8);
-% hs_pixels = reshape(bitStreamHS, [8, num_pixels])';
-% 
-% num_pixels = ceil(length(bitStreamSRRC) / 8);
-% srrc_pixels = reshape(bitStreamSRRC, [8, num_pixels])';
 
 %%
+noiseLevel = 0.01;
 
-decStream = bitStreamToChunk(bitStreamHS, qbits,L,W, MM);
+[bitStreamHS, bitStreamSRRC, bitHS_MMSE, bitSRRC_MMSE] = quickerMain(bitStream, 0.01);
+
+decStream1 = bitStreamToChunk(bitHS_MMSE, qbits,L,W, MM);
+ImagePostProcess_gray(decStream1,r,c,m,n,minval,maxval)
+
+%%
+decStream2 = bitStreamToChunk(bitSRRC_MMSE, qbits, L,W, MM);
+ImagePostProcess_gray(decStream2,r,c,m,n,minval,maxval)
+
+%%
+decStream3 = bitStreamToChunk(bitStreamHS, qbits,m,n, MM);
+ImagePostProcess_gray(decStream3,r,c,m,n,minval,maxval)
+
 %%TODO: test whether can retreive the data too...
 
 %% Next - feed this through the second part of the image processing

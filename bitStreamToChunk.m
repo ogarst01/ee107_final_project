@@ -4,7 +4,7 @@ bitStream = uint8(bitStream);
 sizeDec = L*W*N; 
 
 % grab and make into an 8x length matrix (opposite of before)
-bitStreamMat = reshape(bitStream, bitsPerRow, sizeDec);
+bitStreamMat = reshape(bitStream, 8, sizeDec);
 
 % Then, take from binary back to decimal:
 decStreamVec = bi2de(bitStreamMat');
