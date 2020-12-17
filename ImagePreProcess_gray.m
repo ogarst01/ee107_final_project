@@ -1,10 +1,12 @@
 function [Ztres,r,c,m,n,minval,maxval]=ImagePreProcess_gray(qbits)
 
 % read the image
-X = imread('babyImage.png');
-X = X(:,:,1);
+X = imread('image.jpg');
 
 size(X)
+
+X = X(100:200,1:300,1);
+
 % HARDCODED since we have a 3 channel "color image"
 % crop the image to a size divisible by 8
 [m, n] = size(X);

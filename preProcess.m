@@ -6,32 +6,24 @@ qbits = 8;
 
 % define some dimensions for the system:
 [L,W,H] = size(Ztres);
-
+%%
 MM = r*c;
-% only grab first slice: 
-DCT_chunk = Ztres(:,:,(1:MM));
 
-[bitStream] = convertToBitStream(DCT_chunk,L,W,MM);
+[bitStream] = convertToBitStream(Ztres,L,W,MM);
 
 %%
-noiseLevel = 0.01;
+noiseLevel = 0;
+% chose your desired equalizer:
+%type = 'Z.F.';
+type = 'MMSE';
+[bitStreamHS, bitStreamSRRC] = quickerMain(bitStream, noiseLevel, type);
 
-[bitStreamHS, bitStreamSRRC, bitHS_MMSE, bitSRRC_MMSE] = quickerMain(bitStream, 0.01);
+%%
 
-decStream1 = bitStreamToChunk(bitHS_MMSE, qbits,L,W, MM);
+decStream1 = bitStreamToChunk(bitStreamHS, qbits,L,W, MM);
 ImagePostProcess_gray(decStream1,r,c,m,n,minval,maxval)
 
 %%
-decStream2 = bitStreamToChunk(bitSRRC_MMSE, qbits, L,W, MM);
+decStream2 = bitStreamToChunk(bitStreamSRRC, qbits, L,W, MM);
 ImagePostProcess_gray(decStream2,r,c,m,n,minval,maxval)
 
-%%
-decStream3 = bitStreamToChunk(bitStreamHS, qbits,m,n, MM);
-ImagePostProcess_gray(decStream3,r,c,m,n,minval,maxval)
-
-%%TODO: test whether can retreive the data too...
-
-%% Next - feed this through the second part of the image processing
-% pipeline: 
-
-ImagePostProcess_gray(decStream,r,c,m,n,minval,maxval)

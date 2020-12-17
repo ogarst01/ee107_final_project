@@ -1,30 +1,27 @@
 % Olive Garst
 % Dec. 2020
-function [trimmed, hzt, channelResponse, t, HZF, H, f] = zeroFilterEqualizer(channelResponse, signal, fs, lengthOriginal)
-% Olive Garst
-% Dec. 2020
-%function forcedZeroSign = zeroFilterEqualizer(channelResponse, signal)
+function [trimmed] = zeroFilterEqualizer(channelResponse, signal, typePulse, lengthOriginal)
+% srrcType = 'srrc';
+% HStype  = 'half';
 
-channelResponse = channel_impulse_response;
-signal = hs_convolved;
+if(typePulse == 'half')
+    NFFT = lengthOriginal*33;
+    H = fft(channelResponse,NFFT);
+    HZF = 1./H;
+    forcedZeroSign = ifft(HZF.*(fft(signal,NFFT)), NFFT);%conv(hzt,signal);
+    trimmed = forcedZeroSign(1:(lengthOriginal*32 + 1));
+    
+else
+    NFFT = lengthOriginal*40;
 
-% Inputs:   channel impulse response
-%           signal to be equalize
-%           
-% Outputs: equalized signal
+    H = fft(channelResponse,NFFT);
 
-% do not put 0's at the last bit (don't pad)
+    HZF = 1./H;
 
-signal2 = signal;
-channelResponse2 = channelResponse;
+    forcedZeroSign = ifft(HZF.*(fft(signal,NFFT)), NFFT);
+    
+    trimmed = forcedZeroSign(1:(lengthOriginal*32 + 100));
 
-NFFT = 10*length(signal);
-
-H = fft(channelResponse2, NFFT);
-
-HZF = 1./H;
-
-hzt = (ifft(HZF, NFFT));
-
-forcedZeroSign = conv(hzt,signal2);
+end
+    
 end

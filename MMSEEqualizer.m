@@ -18,6 +18,6 @@ HMMSE = Hconj./((abs(H)).^2 + (SNR));
 signalRecovered = ifft(HMMSE.*fft(signal,length(HMMSE)));
 
 % trim the output since Matlab pads with 0's for convolution
-trimmed = signalRecovered(1:(length(signal)-length(channel_impulse_response)));    
+trimmed = signalRecovered;    
 
 end

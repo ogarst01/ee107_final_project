@@ -1,12 +1,12 @@
-%function [bitStreamHS_ZF,bitStreamSRRC_ZF,bitStreamHS_MMSE,bitStreamSRRC_MMSE] = quickerMain(signal, sqrtNsPowr2)
-sqrtNsPowr2 = 0.01;
+function [bitStreamHS, bitStreamSRRC] = quickerMain(signal, sqrtNsPowr2, type)
+%sqrtNsPowr2 = 0.01;
 
 %signal = bitStream;
 
 % define some constants:
 T_bit = 1;
 fs = 32;
-signal = bitStream; %randi([0 1], 1, 1006);
+%signal = bitStream; %randi([0 1], 1, 1006);
 % signal = [0 0 1 1 1 0 1 1 0 1];
 % signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
@@ -41,18 +41,22 @@ graphImpulse = false;
 
 
 %% Equalizers
-lengthOriginal = length(signal);
-% feed the transmitted signals into the receiver:
-[SRRC_equalized, hzt, ht, t, HZF, H, f] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs, lengthOriginal);
-[HS_equalized, ~, ~, ~, ~, ~]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs, lengthOriginal);
+lengthOriginal = length(signal)
+srrcType = 'srrc';
+HStype  = 'half';
+if(type == 'Z.F.')
+    % feed the transmitted signals into the receiver:
+    [SRRC_equalized] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, srrcType, lengthOriginal);
+    [HS_equalized]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, HStype, lengthOriginal);
+elseif(type == 'MMSE')
 
+    %% MMSE Equalizer code: 
 
-%% MMSE Equalizer code: 
-
-[SRRC_MSSE, HMMSE1] = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
-[HS_MSSE, HMMSE2]   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
-
-
+    [SRRC_MSSE, HMMSE1] = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
+    [HS_MSSE, HMMSE2]   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
+    SRRC_equalized = SRRC_MSSE;
+    HS_equalized = HS_MSSE;
+end
 %% Sampling
 
 % grab bits from ZF equalizer
@@ -62,39 +66,40 @@ hs_bits = (hs_symbols + 1) / 2;
 [srrc_symbols] = sample_srrc(SRRC_equalized);
 srrc_bits = srrc_symbols;
 
-% grab bits from MMSE equalizer
-[hs_symbols] = sample_hs(HS_MSSE);
-hs_bits_MMSE = (hs_symbols + 1) / 2;
+% % grab bits from MMSE equalizer
+% [hs_symbols] = sample_hs(HS_MSSE);
+% hs_bits_MMSE = (hs_symbols + 1) / 2;
+% 
+% [srrc_symbols] = sample_srrc(SRRC_MSSE);
+% srrc_bits_MMSE = srrc_symbols;
 
-[srrc_symbols] = sample_srrc(SRRC_MSSE);
-srrc_bits_MMSE = srrc_symbols;
+bitStreamHS = hs_bits(1:length(signal));
+bitStreamSRRC = srrc_bits(1:length(signal));
+% bitStreamHS_MMSE = hs_bits_MMSE;
+% bitStreamSRRC_MMSE = srrc_bits_MMSE;
+end
+% %%
+% figure,
+% plot(double(srrc_bits_MMSE) - double(signal), 'r')
+% title('error plot for SRRC - MMSE')
+% ylim([-2,2])
+% 
+% figure,
+% plot(double(hs_bits_MMSE) - double(signal), 'r')
+% title('error plot for HS - MMSE')
+% ylim([-2,2])
+% %%
+% figure,
+% plot(double(srrc_bits(1:length(signal))) - double(signal), 'r')
+% title('error plot for SRRC - ZF')
+% ylim([-2,2])
+% 
+% figure,
+% plot(double(hs_bits(1:length(signal))) - double(signal), 'r')
+% title('error plot for HS - ZF')
+% ylim([-2,2])
 
-bitStreamHS_ZF = hs_bits;
-bitStreamSRRC_ZF = srrc_bits;
-bitStreamHS_MMSE = hs_bits_MMSE;
-bitStreamSRRC_MMSE = srrc_bits_MMSE;
-
-%%
-figure,
-plot(double(srrc_bits_MMSE) - double(signal), 'r')
-title('error plot for SRRC - MMSE')
-ylim([-2,2])
-
-figure,
-plot(double(hs_bits_MMSE) - double(signal), 'r')
-title('error plot for HS - MMSE')
-ylim([-2,2])
-%%
-figure,
-plot(double(srrc_bits(1:length(signal))) - double(signal), 'r')
-title('error plot for SRRC - ZF')
-ylim([-2,2])
-
-figure,
-plot(double(hs_bits(1:length(signal))) - double(signal), 'r')
-title('error plot for HS - ZF')
-ylim([-2,2])
-
+%end
 % figure,
 % subplot(2,1,1)
 % plot(signal)
