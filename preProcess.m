@@ -14,8 +14,8 @@ MM = r*c;
 %%
 noiseLevel = 0;
 % chose your desired equalizer:
-%type = 'Z.F.';
-type = 'MMSE';
+type = 'Z.F.';
+%type = 'MMSE';
 [bitStreamHS, bitStreamSRRC] = quickerMain(bitStream, noiseLevel, type);
 
 %%

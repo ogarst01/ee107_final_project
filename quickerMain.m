@@ -13,9 +13,9 @@ fs = 32;
 % signal(50) = 1;
 
 % Outdoor channel really doesn't work:
-%channelType = 'outdoor';
+channelType = 'outdoor';
 %channelType = 'indoor ';
-channelType = 'starter';
+%channelType = 'starter';
 % signal = signalVec;
 
 %% Modulate signal:
@@ -57,6 +57,16 @@ elseif(type == 'MMSE')
     SRRC_equalized = SRRC_MSSE;
     HS_equalized = HS_MSSE;
 end
+
+    % plot eye diagrams: 
+%     figure(90)
+%     eyediagram(SRRC_equalized, 2*fs, 2);
+%     title("Eye Diagram: SRRC, 2 periods");
+%      
+%     figrue(91)
+%     eyediagram(HS_equalized, 2*fs, 2);
+%     title("Eye Diagram: HS, 2 periods");
+
 %% Sampling
 
 % grab bits from ZF equalizer
@@ -65,13 +75,6 @@ hs_bits = (hs_symbols + 1) / 2;
 
 [srrc_symbols] = sample_srrc(SRRC_equalized);
 srrc_bits = srrc_symbols;
-
-% % grab bits from MMSE equalizer
-% [hs_symbols] = sample_hs(HS_MSSE);
-% hs_bits_MMSE = (hs_symbols + 1) / 2;
-% 
-% [srrc_symbols] = sample_srrc(SRRC_MSSE);
-% srrc_bits_MMSE = srrc_symbols;
 
 bitStreamHS = hs_bits(1:length(signal));
 bitStreamSRRC = srrc_bits(1:length(signal));

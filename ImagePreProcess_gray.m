@@ -5,7 +5,7 @@ X = imread('image.jpg');
 
 size(X)
 
-X = X(100:200,1:300,1);
+X = X(1:200,1:300,1);
 
 % HARDCODED since we have a 3 channel "color image"
 % crop the image to a size divisible by 8
