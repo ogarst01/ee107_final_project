@@ -17,8 +17,11 @@ noiseLevel = 0.0;
 % type = 'Z.F.';
 type = 'MMSE';
 
-test_seq = randi([0 1], 1, 10);
-[bitStreamHS, bitStreamSRRC] = quickerMain(bitStream, noiseLevel, type);
+%test_seq = randi([0 1], 1, 10);
+%[bitStreamHS, bitStreamSRRC] = quickerMain(bitStream, noiseLevel, type);
+
+[bitStreamHS, bitStreamSRRC] = main(bitStream, noiseLevel, type);
+
 
 %%
 

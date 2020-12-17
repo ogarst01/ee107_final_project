@@ -1,13 +1,13 @@
-%function [bitStreamHS,bitStreamSRRC] = main(signal, sqrtNsPowr2)
-sqrtNsPowr2 = 0;
+function [bitStreamHS,bitStreamSRRC] = main(signal, sqrtNsPowr2, type)
+%sqrtNsPowr2 = 0;
 
 % define some constants:
 T_bit = 1;
 fs = 32;
 
-signal = randi([0 1], 1, 100);
+%signal = randi([0 1], 1, 100);
 % signal = [0 0 1 1 1 0 1 1 0 1];
-signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
+%signal= [0 0 0 0 0 0 1 0 0 0 0 0 0];
 % signal = zeros(1, 100);
 % signal(50) = 1;
 
@@ -25,9 +25,9 @@ plotZFEqualizer = false;
 plotMMSEqualizer = false; 
 %% Modulate signal:
 % make the transmitted signal, thru channel + add noise: 
-[srrc_modulated, hs_modulated, t, K] = modulator(T_bit, fs, signal);
+[srrc_modulated, hs_modulated, t, K, ~] = modulator(T_bit, fs, signal);
 
-if (1)
+if (0)
     figure(1);
     clf;
     subplot(2, 1, 1);
@@ -150,12 +150,26 @@ if (0)
 end
 
 %% Equalizers
+lengthOriginal = length(signal)
+srrcType = 'srrc';
+HStype  = 'half';
 
-% feed the transmitted signals into the receiver:
-[SRRC_equalized, hzt, ht, t, HZF, H, f] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, fs);
-[HS_equalized, ~, ~, ~, ~, ~]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, fs);
+if(type == 'Z.F.')
+    % feed the transmitted signals into the receiver:
+    [SRRC_equalized] = zeroFilterEqualizer(channel_impulse_response, srrc_convolved, srrcType, lengthOriginal);
+    [HS_equalized]   = zeroFilterEqualizer(channel_impulse_response, hs_convolved, HStype, lengthOriginal);
+elseif(type == 'MMSE')
 
-if(1)
+    %% MMSE Equalizer code: 
+
+    [SRRC_MSSE, HMMSE1] = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
+    [HS_MSSE, HMMSE2]   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
+    SRRC_equalized = SRRC_MSSE;
+    HS_equalized = HS_MSSE;
+end
+
+if((type == 'Z.F.'))
+    if(0)
     
     figure, 
     subplot(4,1,1)
@@ -216,15 +230,13 @@ if(1)
     figure, 
     plot(conv(channel_impulse_response, hzt))
     title('Dirac Delta check for the SRRC pulse')
+    end
 
 end
 
-%% MMSE Equalizer code: 
 
-[SRRC_MSSE, HMMSE1] = MMSEEqualizer(srrc_convolved, sqrtNsPowr2, channel_impulse_response);
-[HS_MSSE, HMMSE2]   = MMSEEqualizer(hs_convolved, sqrtNsPowr2, channel_impulse_response);
-
-if(0)
+if(type == 'MMSE')
+    if(0)
     figure, 
     subplot(2,1,1)
     plot(SRRC_MSSE)
@@ -316,6 +328,7 @@ if(0)
     title('impulse response HS')
     xlabel('time')
     ylabel('amplitude')
+    end
 end
 
 %%
@@ -398,12 +411,8 @@ hs_bits = (hs_symbols + 1) / 2;
 [srrc_symbols] = sample_srrc(SRRC_equalized);
 srrc_bits = srrc_symbols;
 
-% grab bits from MMSE equalizer
-[hs_symbols] = sample_hs(HS_MSSE);
-hs_bits_MMSE = (hs_symbols + 1) / 2;
-
-[srrc_symbols] = sample_srrc(SRRC_MSSE);
-srrc_bits_MMSE = srrc_symbols;
+bitStreamHS = hs_bits(1:length(signal));
+bitStreamSRRC = srrc_bits(1:length(signal));
 
 
 if(0)
@@ -422,21 +431,6 @@ end
 "Sampled the signal"
 
 
-bitStreamHS = hs_bits;
-bitStreamSRRC = srrc_bits;
-%% Rearrange Data
-
-
-
-
-% Find signal to noise ratio: (ideally is 0 db = 1 -> signal to noise
-% ratio of 1
-% SNR_hs_zf   = snr(double(hs_bits), signal);
-% SNR_srrc_zf = snr(double(srrc_bits), signal);
-% %%
-% SNR_hs_MMSE   = snr((hs_bits_MMSE), signal);
-% SNR_srrc_MMSE = snr((srrc_bits_MMSE), signal);
-%%
 % figure,
 % subplot(2,1,1)
 % stem(double(hs_bits))
@@ -469,31 +463,27 @@ bitStreamSRRC = srrc_bits;
 % stem(signal)
 % title('Original Signal')
 %%
-figure,
-plot(double(srrc_bits_MMSE) - signal, 'r')
-title('error plot for SRRC - MMSE')
-ylim([-2,2])
+plotFinal = false;
+if(plotFinal)
+    figure,
+    plot(double(srrc_bits_MMSE) - signal, 'r')
+    title('error plot for SRRC - MMSE')
+    ylim([-2,2])
 
-figure,
-plot(double(hs_bits_MMSE) - signal, 'r')
-title('error plot for HS - MMSE')
-ylim([-2,2])
+    figure,
+    plot(double(hs_bits_MMSE) - signal, 'r')
+    title('error plot for HS - MMSE')
+    ylim([-2,2])
 
-figure,
-plot(double(srrc_bits) - signal, 'r')
-title('error plot for SRRC - ZF')
-ylim([-2,2])
+    figure,
+    plot(double(srrc_bits) - signal, 'r')
+    title('error plot for SRRC - ZF')
+    ylim([-2,2])
 
-figure,
-plot(double(hs_bits) - signal, 'r')
-title('error plot for HS - ZF')
-ylim([-2,2])
-%% TO DO: 
-% - Why is the SNR always 0? Could something be going wrong
-% - How to input images, etc.
-% - Clean up main - there's too many outputs being printed - will take 
-%   forever to run
-% - try diff channel types early - this messed the whole thing up
-%end
-%
-% end
+    figure,
+    plot(double(hs_bits) - signal, 'r')
+    title('error plot for HS - ZF')
+    ylim([-2,2])
+end
+
+end
